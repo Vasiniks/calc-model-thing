@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MCV4U Intersections 3D</title>
+<script src="https://www.desmos.com/api/v1.11/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6"></script>
+<style>
+:root{--bg:#08080a;--fg:#ededed;--mut:#7a7a82;--line:rgba(255,255,255,.1);--card:#121215;--card2:#18181d;--accent:#8b7cff}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--fg);font:13.5px/1.5 system-ui,sans-serif}
+header{position:sticky;top:0;z-index:20;backdrop-filter:blur(24px);background:color-mix(in srgb,var(--bg) 82%,transparent);border-bottom:1px solid var(--line);padding:12px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+header h1{font-size:14px;font-weight:700}
+.meta{color:var(--mut);font-size:11px}
+nav{display:flex;gap:5px;flex-wrap:wrap;margin-left:auto}
+nav a{color:var(--mut);text-decoration:none;font-size:11px;padding:5px 10px;border-radius:999px;border:1px solid var(--line)}
+nav a.active,nav a:hover{color:var(--fg);border-color:var(--accent);background:rgba(139,124,255,.12)}
+main{max-width:1180px;margin:0 auto;padding:18px 16px 64px}
+.hero{display:grid;grid-template-columns:1.2fr .8fr;gap:12px;margin-bottom:20px}
+@media(max-width:760px){.hero{grid-template-columns:1fr}}
+.hero-c{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}
+.hero-c h2{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin-bottom:8px}
+.hero-c p,.hero-c li{font-size:12.5px;color:#b7b7bf;line-height:1.5}
+.hero-c ul{padding-left:14px}
+section{margin:28px 0 32px;scroll-margin-top:64px}
+.sec-h{display:flex;align-items:baseline;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.sec-h h2{font-size:15px;font-weight:700}
+.badge{font-size:10px;padding:2px 8px;border-radius:99px;background:var(--card2);border:1px solid var(--line);color:var(--mut)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px}
+.case{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+.case-h{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid var(--line);gap:8px}
+.case-h h3{font-size:12.5px;font-weight:600;line-height:1.3}
+.case-h .label{font-size:10px;font-family:ui-monospace,monospace;color:var(--mut);white-space:nowrap;background:var(--card2);padding:2px 6px;border-radius:6px;border:1px solid var(--line)}
+.calc-wrap{width:100%;height:360px;position:relative;background:#0e0e11}
+.case-foot{padding:8px 12px;font-size:11px;color:#8b8b93;line-height:1.45;border-top:1px solid var(--line);background:var(--card2)}
+.case-foot code{font-family:ui-monospace,monospace;font-size:10.5px;color:#a8a8b0}
+.plan{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.plan table{width:100%;border-collapse:collapse;font-size:12px}
+.plan th{color:var(--mut);font-weight:600;text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);font-size:10px;text-transform:uppercase;letter-spacing:.08em}
+.plan td{padding:7px 8px;border-bottom:1px solid rgba(255,255,255,.05);vertical-align:top}
+.small{font-size:11px;color:var(--mut)}
+</style></head><body>
+<header><div><h1>MCV4U1 Intersections — 3-D Models</h1><div class="meta">18 cases * Desmos 3D live * Due Thu Nov 12 2026 * 6-person build</div></div>
+<nav id="topnav"><a href="#lines">2 Lines (4)</a><a href="#line-plane">Line Plane (3)</a><a href="#planes">2 Planes (3)</a><a href="#three-planes">3 Planes (8)</a><a href="#planning">Planning</a></nav></header>
+<main>
+<div class="hero">
+<div class="hero-c"><h2>Interactive</h2><p>Each card = live Desmos 3D. Drag orbit, scroll zoom, right-drag pan. Click hamburger to edit equations. Equations in footer = fallback. Paste at <a href="https://www.desmos.com/3d" target="_blank" style="color:var(--accent)">desmos.com/3d</a> if embed blocked. Colors: <span style="color:#ff5a5a">■</span> lines/intersections <span style="color:#5ab6ff">■</span> plane1 <span style="color:#5eff8a">■</span> plane2 <span style="color:#ffb84d">■</span> plane3</p></div>
+<div class="hero-c"><h2>Physical build — consistent look</h2><ul><li>Planes: translucent cardstock blue/green/yellow on foamcore stands</li><li>Lines: black wooden skewers, intersections: red dot/thread</li><li>Labels same font — vector [x,y,z]+t[a,b,c] + scalar + normal</li><li>No hands — slits + hot glue + base, 20cm min, visible back row</li><li>GH Pages: enable Pages source main root + add .nojekyll</li></ul></div>
+</div>
+<section id="lines"><div class="sec-h"><h2>Two lines in 3-space</h2><span class="badge">4 exhaustive: intersecting · parallel · skew · coincident</span></div><div class="grid" id="g-lines"></div></section>
+<section id="line-plane"><div class="sec-h"><h2>Line and a plane</h2><span class="badge">3: single point · parallel (0) · contained (inf)</span></div><div class="grid" id="g-line-plane"></div></section>
+<section id="planes"><div class="sec-h"><h2>Two planes</h2><span class="badge">3: line · parallel · coincident</span></div><div class="grid" id="g-planes"></div></section>
+<section id="three-planes"><div class="sec-h"><h2>Three planes</h2><span class="badge">8: Ontario MCV4U table</span></div><div class="grid" id="g-three"></div></section>
+<section id="planning" class="plan"><h2>Planning & Allocation (6-person) — editable inline</h2>
+<div class="small" style="margin-bottom:10px">Mark statuses right here before build. Future edit mode will save to localStorage.</div>
+<table><tr><th>Member</th><th>Cases (physical)</th><th>Tasks</th><th>Status</th></tr>
+<tr><td>M1 Lead/2Lines</td><td>2L-1..4 (4)</td><td>Style guide, stand, label template</td><td>☐</td></tr>
+<tr><td>M2 Line∩Plane</td><td>LP-1..3 (3)</td><td>Why exhaustive justification</td><td>☐</td></tr>
+<tr><td>M3 Two Planes</td><td>2P-1..3 (3)</td><td>Photos + poster</td><td>☐</td></tr>
+<tr><td>M4 ThreePlanes A</td><td>3P-1..4 (4)</td><td>Materials + summary</td><td>☐</td></tr>
+<tr><td>M5 ThreePlanes B</td><td>3P-5..8 (4)</td><td>Completeness check</td><td>☐</td></tr>
+<tr><td>M6 Editor/GH</td><td>QA all 18</td><td>This site, logs, presentation</td><td>☐</td></tr></table>
+<div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:14px" class="small">
+<div><b style="color:#ddd">Timeline</b><ul style="margin:6px 0 0 14px;line-height:1.6"><li>Nov 2-3: Buy foamcore, skewers, translucent cardstock, red thread, hot glue, stands</li><li>Nov 4-6: Build + photo style check</li><li>Nov 7-8: Label vectors, normals, intersection notation</li><li>Nov 9: Assembly no-hands test, 20cm+ visible</li><li>Nov 11: Rehearsal each explains their math</li><li>Nov 12: Submit + present + personal logs</li></ul></div>
+<div><b style="color:#ddd">Why these counts</b><ul style="margin:6px 0 0 14px;line-height:1.6"><li><b>2 lines:</b> dir parallel? Y→same line? coincident:parallel distinct. N→coplanar? intersecting:skew =4</li><li><b>Line&plane:</b> n·d≠0→1pt, =0→P0∈π contained else ∥ =3</li><li><b>2 planes:</b> n∥? N→line Y→same? coincident:parallel =3</li><li><b>3 planes:</b> (1)pt (2)pencil line (3)prism pairwise lines no common (4)2∥ cut by 3rd (5)coincident pair+cutting line (6)coincident pair+∥ (7)all coincident (8)all ∥ =8</li></ul></div>
+</div>
+<div class="small" style="margin-top:12px">For personal contribution summary template each member submits: Brainstorming → Design decisions → Construction steps (hours, tools) → Presentation role. Keep 200-300 words each.</div></section></main>
+<script>
+const COL={BLUE:"#5ab6ff",GREEN:"#5eff8a",ORANGE:"#ffb84d",RED:"#ff5a5a"};
+const DB={
+"lines":[
+{id:"2L-1",t:"Intersecting at one point",sub:"coplanar, one solution",eq:"L1 n L2={(0,0,0)}",exprs:[{latex:"(t,t,0)",color:COL.RED},{latex:"(s,-s,0)",color:"#5ab6ff"},{latex:"(0,0,0)",color:COL.RED}]},
+{id:"2L-2",t:"Parallel distinct",sub:"same direction 0 pts",eq:"d1||d2 r01!=r02+td",exprs:[{latex:"(t,0,0)",color:COL.RED},{latex:"(t,1,0)",color:"#5ab6ff"}]},
+{id:"2L-3",t:"Skew",sub:"non-coplanar never meet",eq:"no t,s equality not coplanar",exprs:[{latex:"(t,0,0)",color:COL.RED},{latex:"(0,1,s)",color:"#5ab6ff"}]},
+{id:"2L-4",t:"Coincident",sub:"same line inf pts",eq:"L1=L2",exprs:[{latex:"(t,t,t)",color:COL.RED},{latex:"(s+0.05,s+0.05,s+0.05)",color:"#5ab6ff"}]},
+],
+"line-plane":[
+{id:"LP-1",t:"Line cuts plane — one point",sub:"n·d!=0",eq:"L:(t,0,t) x z=0 at origin",exprs:[{latex:"z=0",color:"#5ab6ff"},{latex:"(t,0,t)",color:COL.RED},{latex:"(0,0,0)",color:COL.RED}]},
+{id:"LP-2",t:"Line || plane — zero points",sub:"n·d=0 P0 not in pi",eq:"L:(t,0,1) || z=0",exprs:[{latex:"z=0",color:"#5ab6ff"},{latex:"(t,0,1)",color:COL.RED}]},
+{id:"LP-3",t:"Line lies in plane",sub:"n·d=0 P0 in pi inf",eq:"L subset pi: (t,0,0) in {z=0}",exprs:[{latex:"z=0",color:"#5ab6ff"},{latex:"(t,0,0)",color:COL.RED}]},
+],
+"planes":[
+{id:"2P-1",t:"Intersect in a line",sub:"n1 not || n2",eq:"z=0 n y=0 = x-axis",exprs:[{latex:"z=0",color:"#5ab6ff"},{latex:"y=0",color:"#5eff8a"},{latex:"(t,0,0)",color:COL.RED}]},
+{id:"2P-2",t:"Parallel distinct",sub:"n1||n2 d1!=d2 0 pts",eq:"z=0 || z=1",exprs:[{latex:"z=0",color:"#5ab6ff"},{latex:"z=1",color:"#5eff8a"}]},
+{id:"2P-3",t:"Coincident",sub:"same plane inf (plane)",eq:"pi1=pi2 z=0",exprs:[{latex:"z=0",color:"#5ab6ff"},{latex:"z=0.04",color:"#5eff8a"}]},
+],
+"three-planes":[
+{id:"3P-1",t:"1 — Single point",sub:"general position",eq:"x=0,y=0,z=0 -> (0,0,0)",exprs:[{latex:"x=0",color:"#5ab6ff"},{latex:"y=0",color:"#5eff8a"},{latex:"z=0",color:"#ffb84d"},{latex:"(0,0,0)",color:COL.RED}]},
+{id:"3P-2",t:"2 — Line (pencil)",sub:"all contain same line",eq:"x=0,y=0,x=y -> z-axis",exprs:[{latex:"x=0",color:"#5ab6ff"},{latex:"y=0",color:"#5eff8a"},{latex:"x=y",color:"#ffb84d"},{latex:"(0,0,t)",color:COL.RED}]},
+{id:"3P-3",t:"3 — Triangular prism",sub:"pairwise meet no common",eq:"x=0,y=0,x+y=1 empty common",exprs:[{latex:"x=0",color:"#5ab6ff"},{latex:"y=0",color:"#5eff8a"},{latex:"x+y=1",color:"#ffb84d"}]},
+{id:"3P-4",t:"4 — Two || + transversal",sub:"2 || cut by 3rd -> 2 || lines",eq:"z=0,z=1,y=0",exprs:[{latex:"z=0",color:"#5ab6ff"},{latex:"z=1",color:"#5eff8a"},{latex:"y=0",color:"#ffb84d"},{latex:"(t,0,0)",color:COL.RED},{latex:"(t,0,1)",color:COL.RED}]},
+{id:"3P-5",t:"5 — Coincident pair + intersecting",sub:"double plane cut -> line",eq:"z=0,z~0,y=0 -> line",exprs:[{latex:"z=0",color:"#5ab6ff"},{latex:"z=0.04",color:"#5eff8a"},{latex:"y=0",color:"#ffb84d"},{latex:"(t,0,0)",color:COL.RED}]},
+{id:"3P-6",t:"6 — Coincident pair + || third",sub:"double plane || third -> empty",eq:"z=0,z~0,z=1 empty",exprs:[{latex:"z=0",color:"#5ab6ff"},{latex:"z=0.04",color:"#5eff8a"},{latex:"z=1",color:"#ffb84d"}]},
+{id:"3P-7",t:"7 — All three coincident",sub:"one plane x3",eq:"all z=0 -> whole plane",exprs:[{latex:"z=0",color:"#5ab6ff"},{latex:"z=0.04",color:"#5eff8a"},{latex:"z=0.08",color:"#ffb84d"}]},
+{id:"3P-8",t:"8 — All parallel distinct",sub:"3 sep || planes empty",eq:"z=0,z=1,z=2",exprs:[{latex:"z=0",color:"#5ab6ff"},{latex:"z=1",color:"#5eff8a"},{latex:"z=2",color:"#ffb84d"}]},
+]
+};
+const GRID={lines:"g-lines","line-plane":"g-line-plane","planes":"g-planes","three-planes":"g-three"};
+function build(){
+Object.entries(DB).forEach(([group,cases])=>{
+const g=document.getElementById(GRID[group]);
+cases.forEach(c=>{
+const wrap=document.createElement("div");wrap.className="case";
+wrap.innerHTML='<div class="case-h"><h3>'+c.id+' — '+c.t+'<span style="font-weight:400;color:var(--mut)"> — '+c.sub+'</span></h3><span class="label">'+c.eq+'</span></div><div class="calc-wrap" id="calc-'+c.id+'"></div><div class="case-foot"><code>'+c.exprs.map(e=>e.latex).join("  ·  ")+'</code></div>';
+g.appendChild(wrap);
+});
+});
+}
+function mountAll(){
+if(!window.Desmos||!Desmos.Calculator3D){
+document.querySelectorAll(".calc-wrap").forEach(el=>{
+el.innerHTML='<div style="display:grid;place-items:center;height:100%;color:var(--mut);font-size:11px;text-align:center;padding:12px">Desmos 3D API not loaded.<br>Open <a href="https://www.desmos.com/3d" target="_blank" style="color:#8b7cff">desmos.com/3d</a> and paste from footer.</div>';
+});
+return;
+}
+Object.values(DB).flat().forEach(c=>{
+const el=document.getElementById("calc-"+c.id);
+try{
+const calc=Desmos.Calculator3D(el,{keypad:false,expressionsCollapsed:true});
+c.exprs.forEach((e,i)=>{calc.setExpression({id:"e"+i,latex:e.latex,color:e.color});});
+}catch(err){
+el.innerHTML='<div style="display:grid;place-items:center;height:100%;color:#f66;font-size:11px;padding:12px">Error: '+err.message+'<br><code style="color:#aaa">'+c.exprs.map(e=>e.latex).join("; ")+'</code></div>';
+}
+});
+}
+function navSpy(){
+const obs=new IntersectionObserver(ents=>{
+ents.forEach(en=>{
+if(en.isIntersecting){
+document.querySelectorAll("#topnav a").forEach(a=>a.classList.toggle("active",a.hash==="#"+en.target.id));
+}
+});
+},{rootMargin:"-40% 0px -55% 0px"});
+document.querySelectorAll("section").forEach(s=>obs.observe(s));
+}
+build();
+if(window.Desmos) mountAll(); else window.addEventListener("load",()=>setTimeout(mountAll,400));
+setTimeout(()=>{if(document.querySelectorAll(".calc-wrap .dcg-calculator").length===0) mountAll();},1500);
+navSpy();
+</script></body></html>
