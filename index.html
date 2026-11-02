@@ -4,61 +4,53 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>MCV4U — Intersections</title>
-<script type="importmap">
-{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js"}}
-</script>
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js"}}</script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@400;500&display=swap');
   :root{--bg:#f9f5ee;--fg:#0f0f0f;--mut:#8a8884;--line:#e7ddd0;--line2:#111;--vp:#efe7db}
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%}
-  body{background:var(--bg);color:var(--fg);font:12.5px/1.5 "Geist Mono",monospace;overflow:hidden}
-  .app{display:grid;grid-template-columns:320px 1fr;grid-template-rows:auto 1fr; height:100vh; width:100vw}
-  header{grid-column:1 / -1;border-bottom:1.5px solid var(--line2);padding:14px 18px;display:flex;justify-content:space-between;align-items:baseline;background:var(--bg);z-index:2}
-  header h1{font-family:"Instrument Serif",serif;font-size:28px;font-weight:400;letter-spacing:-.02em}
+  body{background:var(--bg);color:var(--fg);font:12px/1.5 "Geist Mono",monospace;overflow:hidden}
+  .app{display:grid;grid-template-columns:33.333% 66.666%;grid-template-rows:auto 1fr;height:100vh;width:100vw}
+  header{grid-column:1/-1;border-bottom:1.5px solid var(--line2);padding:12px 16px;display:flex;justify-content:space-between;align-items:baseline;background:var(--bg);z-index:2}
+  header h1{font-family:"Instrument Serif",serif;font-size:24px;font-weight:400;letter-spacing:-.02em}
   header h1 i{font-style:italic;color:#6a6a6a}
-  header .meta{font-size:9.5px;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;text-align:right;line-height:1.5}
-  /* sidebar */
-  .side{border-right:1.5px solid var(--line2);background:#fcfaf7;display:flex;flex-direction:column;overflow:hidden}
-  .side-top{padding:14px;border-bottom:1px solid var(--line)}
-  .side-top label{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--mut);display:block;margin-bottom:6px}
-  select{width:100%;font:11px "Geist Mono",monospace;padding:8px 10px;border:1px solid var(--line2);background:var(--bg);color:var(--fg);border-radius:0;outline:none}
-  select:focus{border-color:var(--fg)}
-  .cat-tabs{display:flex;gap:0;border-bottom:1.5px solid var(--line2)}
-  .cat-tabs button{flex:1;background:transparent;border:0;border-right:1px solid var(--line2);padding:9px 6px;font:9px "Geist Mono",monospace;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;color:var(--mut)}
-  .cat-tabs button:last-child{border-right:0}
+  header .meta{font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;text-align:right;line-height:1.5}
+  .side{border-right:1.5px solid var(--line2);background:#fcfaf7;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+  .side-top{padding:10px 12px;border-bottom:1px solid var(--line)}
+  .side-top label{font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:var(--mut);display:block;margin-bottom:5px}
+  select{width:100%;font:11px "Geist Mono",monospace;padding:7px 8px;border:1px solid var(--line2);background:var(--bg);color:var(--fg);border-radius:0;outline:none}
+  .cat-tabs{display:flex;border-bottom:1.5px solid var(--line2);flex-wrap:wrap}
+  .cat-tabs button{flex:1 1 50%;background:transparent;border:0;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:7px 6px;font:8.5px "Geist Mono",monospace;text-transform:uppercase;letter-spacing:.07em;cursor:pointer;color:var(--mut);min-width:0}
   .cat-tabs button.active{background:var(--fg);color:var(--bg)}
-  .case-list{flex:1;overflow:auto}
-  .case-item{padding:10px 14px;border-bottom:1px solid var(--line);cursor:pointer;display:flex;flex-direction:column;gap:2px}
+  .case-list{flex:1;overflow:auto;-webkit-overflow-scrolling:touch}
+  .case-item{padding:9px 12px;border-bottom:1px solid var(--line);cursor:pointer}
   .case-item:hover{background:var(--vp)}
   .case-item.active{background:#0f0f0f;color:#fcfaf7}
   .case-item.active .mut{color:#a8a5a1}
-  .case-item .top-row{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
-  .case-item .id{font-weight:600;font-size:11px}
-  .case-item .recon{font-size:8px;letter-spacing:.08em;text-transform:uppercase;padding:2px 5px;background:#111;color:#fff;display:inline-block}
+  .case-item .topline{display:flex;justify-content:space-between;gap:6px;align-items:baseline}
+  .case-item .id{font-weight:600;font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .case-item .recon{font-size:7.5px;letter-spacing:.08em;text-transform:uppercase;padding:2px 5px;background:#111;color:#fff;flex-shrink:0}
   .case-item.active .recon{background:#fff;color:#111}
-  .case-item .mut{font-size:9.5px;color:var(--mut);line-height:1.4}
-  .side-foot{border-top:1.5px solid var(--line2);padding:12px 14px;background:var(--bg)}
-  .side-foot .row{display:flex;justify-content:space-between;font-size:9.5px;color:var(--mut);margin-bottom:4px}
+  .case-item .mut{font-size:9px;color:var(--mut);line-height:1.4;margin-top:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .side-foot{border-top:1.5px solid var(--line2);padding:10px 12px;background:var(--bg);flex-shrink:0}
+  .side-foot .row{display:flex;justify-content:space-between;gap:8px;font-size:9.5px;color:var(--mut);margin-bottom:3px}
   .side-foot .row b{color:var(--fg);font-weight:600}
-  .side-foot .check{font-size:10px;display:flex;align-items:center;gap:6px;margin-top:8px;cursor:pointer}
-  .side-foot input{accent-color:var(--fg)}
-  /* main viewer */
-  .viewer{position:relative;background:var(--vp);overflow:hidden;display:flex;flex-direction:column}
+  .side-foot .checks{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+  .side-foot .check{font-size:9.5px;display:flex;align-items:center;gap:5px;cursor:pointer}
+  .side-foot .note{margin-top:8px;font-size:8.5px;color:var(--mut);line-height:1.5}
+  .viewer{position:relative;background:var(--vp);overflow:hidden;display:flex;flex-direction:column;min-width:0}
   #c{width:100%;height:100%;display:block;flex:1}
-  .overlay{position:absolute;left:12px;top:12px;z-index:2;pointer-events:none;display:flex;flex-direction:column;gap:8px}
-  .pill{font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;background:rgba(252,250,247,.94);border:1px solid var(--line);padding:4px 8px;color:var(--mut)}
+  .pill{position:absolute;left:10px;top:10px;z-index:2;pointer-events:none;font-size:8px;letter-spacing:.07em;text-transform:uppercase;background:rgba(252,250,247,.95);border:1px solid var(--line);padding:4px 7px;color:var(--mut);max-width:62%;line-height:1.4}
+  .pill+.pill{top:38px}
   .pill b{color:var(--fg)}
-  .axes-legend{position:absolute;right:12px;bottom:12px;z-index:2;pointer-events:none;background:rgba(252,250,247,.94);border:1px solid var(--line);padding:6px 8px;font-size:9px;line-height:1.5;color:var(--mut)}
-  .control-hint{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:2;background:#111;color:#fff;font-size:9px;letter-spacing:.08em;text-transform:uppercase;padding:5px 10px;pointer-events:none}
-  /* mobile */
+  .legend{position:absolute;right:10px;bottom:10px;z-index:2;pointer-events:none;background:rgba(252,250,247,.95);border:1px solid var(--line);padding:5px 7px;font-size:8.5px;line-height:1.5;color:var(--mut)}
+  .hint{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);z-index:2;background:#111;color:#fff;font-size:8px;letter-spacing:.08em;text-transform:uppercase;padding:4px 8px;pointer-events:none}
   @media(max-width:800px){
-    .app{grid-template-columns:1fr;grid-template-rows:auto auto 1fr}
+    .app{grid-template-columns:1fr;grid-template-rows:auto auto 1fr;height:auto;min-height:100vh;overflow:auto}
     body{overflow:auto}
-    .app{height:auto;min-height:100vh}
-    .side{border-right:0;border-bottom:1.5px solid var(--line2);max-height:52vh}
-    .viewer{height:78vh}
-    #c{height:100%}
+    .side{max-height:46vh;border-right:0;border-bottom:1.5px solid var(--line2)}
+    .viewer{height:68vh}
   }
 </style>
 </head>
@@ -66,7 +58,7 @@
 <div class="app">
   <header>
     <h1>Intersections <i>in 3-space</i> — MCV4U1</h1>
-    <div class="meta">18 cases · XY plane ref · tubes & halos ·<br><a href="https://github.com/Vasiniks/calc-model-thing" style="color:inherit">Vasiniks/calc-model-thing</a></div>
+    <div class="meta">18 cases · XY ref · <a href="https://github.com/Vasiniks/calc-model-thing" style="color:inherit">github</a></div>
   </header>
   <div class="side">
     <div class="side-top">
@@ -81,250 +73,192 @@
     </div>
     <div class="case-list" id="list"></div>
     <div class="side-foot">
-      <div class="row"><span><b id="cur-id">2L-1</b> — <span id="cur-name">Intersecting</span></span><span id="cur-recon" style="background:#111;color:#fff;padding:2px 6px;font-size:8px">POINT</span></div>
-      <div class="row" style="color:#6a6a6a;line-height:1.5" id="cur-note">coplanar · 2 lines cross at origin</div>
-      <div class="row" id="cur-math" style="font-size:10px;color:#111">L1: (t,t,0) L2: (s,-s,0)</div>
-      <label class="check"><input type="checkbox" id="toggle-xy" checked> XY reference plane + grid</label>
-      <label class="check"><input type="checkbox" id="toggle-axes" checked> Axes X/Y/Z</label>
-      <label class="check"><input type="checkbox" id="toggle-cage"> Wire cage (bounds)</label>
-      <div style="margin-top:10px;font-size:9px;color:var(--mut);line-height:1.5">Build spec: blue/green/apricot translucent planes 9×9, black tube lines r=0.08, red dot + halo, dashed gray gap for skew/parallel offset. Drag orbit, scroll zoom, right-drag pan.</div>
+      <div class="row"><span><b id="cur-id">2L-1</b> — <span id="cur-name">—</span></span><span id="cur-recon" style="background:#111;color:#fff;padding:2px 6px;font-size:7.5px">—</span></div>
+      <div class="row" style="display:block;line-height:1.5" id="cur-note"></div>
+      <div class="row" style="font-size:9.5px;color:#111" id="cur-math"></div>
+      <div class="checks">
+        <label class="check"><input type="checkbox" id="toggle-xy" checked> XY plane + grid</label>
+        <label class="check"><input type="checkbox" id="toggle-axes" checked> Axes</label>
+        <label class="check"><input type="checkbox" id="toggle-cage"> Cage</label>
+      </div>
+      <div class="note">Thin tubes · smooth dolly zoom · drag orbit · wheel zoom (gentle) · right-drag pan. Menu fixed 1/3 width.</div>
     </div>
   </div>
   <div class="viewer" id="viewer">
     <canvas id="c"></canvas>
-    <div class="overlay">
-      <div class="pill" id="pill-math"><b>Eq:</b> —</div>
-      <div class="pill" id="pill-why"><b>Why:</b> —</div>
-    </div>
-    <div class="axes-legend"><div style="color:#FF3B30">— X</div><div style="color:#18B07A">— Y</div><div style="color:#0A84FF">— Z</div><div style="margin-top:4px;color:#9a9a9a">XY ref at z=0 grid</div></div>
-    <div class="control-hint">drag · scroll · right-drag pan</div>
+    <div class="pill" id="pill-math"><b>—</b></div>
+    <div class="pill" id="pill-why"><b>Why:</b> —</div>
+    <div class="legend"><div style="color:#FF3B30">— X</div><div style="color:#18B07A">— Y</div><div style="color:#0A84FF">— Z</div><div style="margin-top:3px;color:#aaa">XY at z=0</div></div>
+    <div class="hint">drag orbit · scroll zoom · ←→ switch case</div>
   </div>
 </div>
 
 <script type="module">
 import * as THREE from "three";
-
-const COL = { p1:0x6D92FF, p2:0x4ECCA0, p3:0xFFAD3D, line:0x0A0A0A, line2:0x444444, dot:0xE53935, x:0xFF3B30, y:0x18B07A, z:0x0A84FF, xy:0xCFC5B6 };
+const COL = { p1:0x6D92FF, p2:0x4ECCA0, p3:0xFFAD3D, line:0x0A0A0A, line2:0x4A4A4A, dot:0xE53935, x:0xFF3B30, y:0x18B07A, z:0x0A84FF };
 
 const CASES = [
-  {cat:"two-lines", id:"2L-1", name:"Intersecting — one point", note:"coplanar · 2 lines cross at origin", recon:"POINT", math:"L1:(t,t,0) L2:(s,-s,0)", why:"d1×d2≠0, (p2-p1)·(d1×d2)=0 → one solution",
-    build(c){ c.line([-6,-6,0],[6,6,0]); c.line([-6,6,0],[6,-6,0], COL.line2); c.dot(0,0,0); }},
-  {cat:"two-lines", id:"2L-2", name:"Parallel distinct", note:"∥ · offset 1.8, never meet", recon:"NO INT", math:"L1:(t,0,0) L2:(t,1.8,0)", why:"d1×d2=0, (p2-p1)×d1≠0 → distinct parallel",
-    build(c){ c.line([-7,0,0],[7,0,0]); c.line([-7,2.2,0],[7,2.2,0], COL.line2); }},
-  {cat:"two-lines", id:"2L-3", name:"Skew — non-coplanar", note:"never meet, not parallel, gap shown", recon:"SKEW ∅", math:"L1:(t,0,0) L2:(0,2.6,s)", why:"d1×d2≠0, (p2-p1)·(d1×d2)≠0 → skew",
-    build(c){ c.line([-7,0,0],[7,0,0]); c.line([0,2.6,-6],[0,2.6,6], COL.line2); c.dashed([0,0,0],[0,2.6,0]); }},
-  {cat:"two-lines", id:"2L-4", name:"Coincident", note:"same infinite line", recon:"LINE ∞", math:"L1=L2:(t,t,t)", why:"d1×d2=0, (p2-p1)×d1=0 → same line",
-    build(c){ c.line([-6,-6,-6],[6,6,6]); c.line([-6.1,-6.1,-6.1],[6.1,6.1,6.1], COL.line2); }},
-
-  {cat:"line-plane", id:"LP-1", name:"Line cuts plane — point", note:"n·d≠0 · hits z=0 at origin", recon:"POINT", math:"π:z=0 L:(t,0,t)", why:"n·d =1 ≠0, solve t=0",
-    build(c){ c.plane('z',0,COL.p1); c.line([-5,0,-5],[5,0,5]); c.dot(0,0,0); }},
-  {cat:"line-plane", id:"LP-2", name:"Line ∥ plane — 0 pts", note:"above z=0, parallel offset", recon:"NO INT", math:"π:z=0 L:(t,0,1.8)", why:"n·d=0, p0∉π → no solution",
-    build(c){ c.plane('z',0,COL.p1); c.line([-7,0,1.8],[7,0,1.8]); c.dashed([0,0,0],[0,0,1.8]); }},
-  {cat:"line-plane", id:"LP-3", name:"Line in plane — ∞", note:"L ⊂ z=0 entirely", recon:"CONTAINED", math:"π:z=0 L:(t,0,0) ⊂ π", why:"n·d=0, p0∈π → infinite",
-    build(c){ c.plane('z',0,COL.p1); c.line([-7,0,0],[7,0,0]); }},
-
-  {cat:"two-planes", id:"2P-1", name:"Intersect — line", note:"y=0 ∩ z=0 = x-axis", recon:"LINE", math:"π1:z=0 π2:y=0 → L:x-axis", why:"n1×n2≠0 → line",
-    build(c){ c.plane('z',0,COL.p1); c.plane('y',0,COL.p2); c.line([-7,0,0],[7,0,0]); }},
-  {cat:"two-planes", id:"2P-2", name:"Parallel distinct", note:"z=0 ∥ z=1.8, no meet", recon:"NO INT", math:"z=0 ∥ z=1.8", why:"n1∥n2, D1≠D2",
-    build(c){ c.plane('z',0,COL.p1); c.plane('z',1.8,COL.p2); }},
-  {cat:"two-planes", id:"2P-3", name:"Coincident", note:"same plane shown with tiny offset", recon:"PLANE ∞", math:"π1=π2: z=0", why:"n1∥n2, D1=D2",
-    build(c){ c.plane('z',0,COL.p1); c.plane('z',0.16,COL.p2); }},
-
-  {cat:"three-planes", id:"3P-1", name:"1 — Single point", note:"x=0,y=0,z=0 → origin", recon:"POINT", math:"x=0,y=0,z=0 → (0,0,0)", why:"3 normals independent, det≠0",
-    build(c){ c.plane('x',0,COL.p1); c.plane('y',0,COL.p2); c.plane('z',0,COL.p3); c.dot(0,0,0,0.28); }},
-  {cat:"three-planes", id:"3P-2", name:"2 — Line (pencil of planes)", note:"all contain z-axis: x=0,y=0,x=y", recon:"LINE", math:"x=0,y=0,x=y → z-axis", why:"all contain same line, normals coplanar but not parallel",
-    build(c){ c.plane('x',0,COL.p1); c.plane('y',0,COL.p2); c.plane('diag',0,COL.p3,'x=y'); c.line([0,0,-7],[0,0,7]); }},
-  {cat:"three-planes", id:"3P-3", name:"3 — Triangular prism (pairwise, no common)", note:"x=0,y=0,x+y=1 · tunnel", recon:"PRISM ∅", math:"x=0,y=0,x+y=1 → ∅ common", why:"pairwise intersect in 3 parallel lines? no - pairwise meet but no common pt, forms triangular prism",
-    build(c){ c.plane('x',0,COL.p1); c.plane('y',0,COL.p2); c.plane('diag',1,COL.p3,'x+y'); }},
-  {cat:"three-planes", id:"3P-4", name:"4 — Two ∥ + transversal", note:"z=0,z=1.8,y=0 → 2 ∥ lines", recon:"2 LINES ∥", math:"z=0,z=1.8,y=0", why:"two parallel cut by third → two parallel lines",
-    build(c){ c.plane('z',0,COL.p1); c.plane('z',1.8,COL.p2); c.plane('y',0,COL.p3); c.line([-7,0,0],[7,0,0]); c.line([-7,0,1.8],[7,0,1.8]); }},
-  {cat:"three-planes", id:"3P-5", name:"5 — Coincident pair + cutting → line", note:"double z=0 ∩ y=0", recon:"LINE", math:"z=0 (×2) ∩ y=0 → x-axis", why:"coincident pair cut by third → line within double plane",
-    build(c){ c.plane('z',0,COL.p1); c.plane('z',0.16,COL.p2); c.plane('y',0,COL.p3); c.line([-7,0,0],[7,0,0]); }},
-  {cat:"three-planes", id:"3P-6", name:"6 — Coincident pair + ∥ third → ∅", note:"double z=0 ∥ z=1.8", recon:"NO INT", math:"z=0 ×2 ∥ z=1.8 → ∅", why:"coincident pair parallel distinct from third",
-    build(c){ c.plane('z',0,COL.p1); c.plane('z',0.16,COL.p2); c.plane('z',1.8,COL.p3); }},
-  {cat:"three-planes", id:"3P-7", name:"7 — All coincident", note:"z=0 ×3 · whole plane", recon:"PLANE", math:"all z=0", why:"all same D after scaling",
-    build(c){ c.plane('z',0,COL.p1); c.plane('z',0.12,COL.p2); c.plane('z',0.24,COL.p3); }},
-  {cat:"three-planes", id:"3P-8", name:"8 — All parallel distinct", note:"z=0,1.3,2.6", recon:"NO INT", math:"z=0,z=1.3,z=2.6 → ∅", why:"all normals parallel, all D distinct",
-    build(c){ c.plane('z',0,COL.p1); c.plane('z',1.3,COL.p2); c.plane('z',2.6,COL.p3); }},
+{cat:"two-lines", id:"2L-1", name:"Intersecting — one point", note:"coplanar · cross at origin", recon:"POINT", math:"L1:(t,t,0) L2:(s,-s,0)", why:"d1×d2≠0, (p2-p1)·(d1×d2)=0 → one solution", build(c){ c.line([-5,-5,0],[5,5,0]); c.line([-5,5,0],[5,-5,0], COL.line2); c.dot(0,0,0); }},
+{cat:"two-lines", id:"2L-2", name:"Parallel distinct", note:"∥ · offset 1.8", recon:"NO INT", math:"L1:(t,0,0) L2:(t,1.8,0)", why:"d1×d2=0, (p2-p1)×d1≠0 → distinct parallel", build(c){ c.line([-6,0,0],[6,0,0]); c.line([-6,2,0],[6,2,0], COL.line2); }},
+{cat:"two-lines", id:"2L-3", name:"Skew", note:"non-coplanar · gap shown", recon:"SKEW ∅", math:"L1:(t,0,0) L2:(0,2.6,s)", why:"d1×d2≠0, (p2-p1)·(d1×d2)≠0 → skew", build(c){ c.line([-6,0,0],[6,0,0]); c.line([0,2.6,-5],[0,2.6,5], COL.line2); c.dashed([0,0,0],[0,2.6,0]); }},
+{cat:"two-lines", id:"2L-4", name:"Coincident", note:"same infinite line", recon:"LINE ∞", math:"L1=L2:(t,t,t)", why:"d1×d2=0, (p2-p1)×d1=0 → same line", build(c){ c.line([-6,-6,-6],[6,6,6]); c.line([-6.1,-6.1,-6.1],[6.1,6.1,6.1], COL.line2); }},
+{cat:"line-plane", id:"LP-1", name:"Line cuts plane — point", note:"n·d≠0 · hits z=0", recon:"POINT", math:"π:z=0 L:(t,0,t)", why:"n·d=1 ≠0, solve t=0", build(c){ c.plane('z',0,COL.p1); c.line([-5,0,-5],[5,0,5]); c.dot(0,0,0); }},
+{cat:"line-plane", id:"LP-2", name:"Line ∥ plane — 0 pts", note:"above z=0, parallel", recon:"NO INT", math:"π:z=0 L:(t,0,1.8)", why:"n·d=0, p0∉π → no solution", build(c){ c.plane('z',0,COL.p1); c.line([-6,0,1.8],[6,0,1.8]); c.dashed([0,0,0],[0,0,1.8]); }},
+{cat:"line-plane", id:"LP-3", name:"Line in plane — ∞", note:"L ⊂ z=0", recon:"CONTAINED", math:"π:z=0 L:(t,0,0) ⊂ π", why:"n·d=0, p0∈π → infinite", build(c){ c.plane('z',0,COL.p1); c.line([-6,0,0],[6,0,0]); }},
+{cat:"two-planes", id:"2P-1", name:"Intersect — line", note:"y=0 ∩ z=0 = x-axis", recon:"LINE", math:"z=0 ∩ y=0 = x-axis", why:"n1×n2≠0 → line", build(c){ c.plane('z',0,COL.p1); c.plane('y',0,COL.p2); c.line([-6,0,0],[6,0,0]); }},
+{cat:"two-planes", id:"2P-2", name:"Parallel distinct", note:"z=0 ∥ z=1.8", recon:"NO INT", math:"z=0 ∥ z=1.8", why:"n1∥n2, D1≠D2", build(c){ c.plane('z',0,COL.p1); c.plane('z',1.8,COL.p2); }},
+{cat:"two-planes", id:"2P-3", name:"Coincident", note:"same plane · tiny offset", recon:"PLANE ∞", math:"π1=π2: z=0", why:"n1∥n2, D1=D2", build(c){ c.plane('z',0,COL.p1); c.plane('z',0.14,COL.p2); }},
+{cat:"three-planes", id:"3P-1", name:"1 — Single point", note:"x=0,y=0,z=0 → origin", recon:"POINT", math:"x=0,y=0,z=0 → (0,0,0)", why:"det ≠0 → unique", build(c){ c.plane('x',0,COL.p1); c.plane('y',0,COL.p2); c.plane('z',0,COL.p3); c.dot(0,0,0,0.22); }},
+{cat:"three-planes", id:"3P-2", name:"2 — Line (pencil)", note:"all contain z-axis", recon:"LINE", math:"x=0,y=0,x=y → z-axis", why:"pencil, normals coplanar not ∥", build(c){ c.plane('x',0,COL.p1); c.plane('y',0,COL.p2); c.plane('diag',0,COL.p3,'x=y'); c.line([0,0,-6],[0,0,6]); }},
+{cat:"three-planes", id:"3P-3", name:"3 — Triangular prism", note:"x=0,y=0,x+y=1 · no common", recon:"PRISM ∅", math:"x=0,y=0,x+y=1 → ∅", why:"pairwise meet, no common", build(c){ c.plane('x',0,COL.p1); c.plane('y',0,COL.p2); c.plane('diag',1,COL.p3,'x+y'); }},
+{cat:"three-planes", id:"3P-4", name:"4 — Two ∥ + transversal", note:"z=0,z=1.8,y=0 → 2 ∥ lines", recon:"2 LINES ∥", math:"z=0,z=1.8,y=0", why:"two ∥ cut by third", build(c){ c.plane('z',0,COL.p1); c.plane('z',1.8,COL.p2); c.plane('y',0,COL.p3); c.line([-6,0,0],[6,0,0]); c.line([-6,0,1.8],[6,0,1.8]); }},
+{cat:"three-planes", id:"3P-5", name:"5 — Coincident pair + cutting → line", note:"double z=0 ∩ y=0", recon:"LINE", math:"z=0 (×2) ∩ y=0", why:"coincident pair cut → line", build(c){ c.plane('z',0,COL.p1); c.plane('z',0.14,COL.p2); c.plane('y',0,COL.p3); c.line([-6,0,0],[6,0,0]); }},
+{cat:"three-planes", id:"3P-6", name:"6 — Coincident pair + ∥ → ∅", note:"double z=0 ∥ z=1.8", recon:"NO INT", math:"z=0 ×2 ∥ z=1.8", why:"coincident pair ∥ third", build(c){ c.plane('z',0,COL.p1); c.plane('z',0.14,COL.p2); c.plane('z',1.8,COL.p3); }},
+{cat:"three-planes", id:"3P-7", name:"7 — All coincident", note:"z=0 ×3", recon:"PLANE", math:"all z=0", why:"all same D", build(c){ c.plane('z',0,COL.p1); c.plane('z',0.1,COL.p2); c.plane('z',0.2,COL.p3); }},
+{cat:"three-planes", id:"3P-8", name:"8 — All parallel distinct", note:"z=0,1.3,2.6", recon:"NO INT", math:"z=0,z=1.3,z=2.6", why:"all n ∥, D distinct", build(c){ c.plane('z',0,COL.p1); c.plane('z',1.3,COL.p2); c.plane('z',2.6,COL.p3); }},
 ];
 
 const viewer = document.getElementById('viewer');
 const canvas = document.getElementById('c');
 const renderer = new THREE.WebGLRenderer({canvas, antialias:true});
-renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xEFE7DB);
-const camera = new THREE.PerspectiveCamera(24, 1, 0.1, 100);
-camera.position.set(7, -8, 5);
-const ambient = new THREE.AmbientLight(0xffffff, 1); scene.add(ambient);
-
-// global groups that persist
+const camera = new THREE.PerspectiveCamera(28, 1, 0.1, 100);
+camera.position.set(6.5,-7.5,4.5);
 const refGroup = new THREE.Group(); scene.add(refGroup);
 let caseGroup = new THREE.Group(); scene.add(caseGroup);
+scene.add(new THREE.AmbientLight(0xffffff,1));
 
-// XY reference + axes builders
 function buildRef(showXY, showAxes, showCage){
   refGroup.clear();
   if(showXY){
-    // XY plane at z=0 faint reference
-    const xyGeom = new THREE.PlaneGeometry(14,14);
-    const xyMat = new THREE.MeshBasicMaterial({color:0xF5EFE3, transparent:true, opacity:0.9, side:THREE.DoubleSide});
-    const xy = new THREE.Mesh(xyGeom, xyMat);
-    // grid
-    const grid = new THREE.GridHelper(14, 14, 0xB8AE9D, 0xD8CFC0);
-    grid.rotation.x = Math.PI/2; grid.position.z = 0.01;
-    refGroup.add(xy); refGroup.add(grid);
+    const xy = new THREE.Mesh(new THREE.PlaneGeometry(16,16), new THREE.MeshBasicMaterial({color:0xF5EFE3, transparent:true, opacity:0.92, side:THREE.DoubleSide}));
+    refGroup.add(xy);
+    const grid = new THREE.GridHelper(16,16, 0xC2B8A6, 0xDBD2C2);
+    grid.rotation.x = Math.PI/2; grid.position.z = 0.005;
+    refGroup.add(grid);
   }
   if(showAxes){
-    function axis(dir,color){
-      const len=6;
-      const pts=[new THREE.Vector3(0,0,0), dir.clone().multiplyScalar(len*0.92)];
-      refGroup.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({color})));
-      const cone=new THREE.Mesh(new THREE.ConeGeometry(0.14,0.42,12), new THREE.MeshBasicMaterial({color}));
+    function ax(dir,color){
+      const len=5.2;
+      refGroup.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,0,0), dir.clone().multiplyScalar(len*0.9)]), new THREE.LineBasicMaterial({color})));
+      const cone=new THREE.Mesh(new THREE.ConeGeometry(0.09,0.24,10), new THREE.MeshBasicMaterial({color}));
       cone.position.copy(dir.clone().multiplyScalar(len));
       cone.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), dir.clone().normalize());
       refGroup.add(cone);
     }
-    axis(new THREE.Vector3(1,0,0), COL.x);
-    axis(new THREE.Vector3(0,1,0), COL.y);
-    axis(new THREE.Vector3(0,0,1), COL.z);
-    refGroup.add(new THREE.Mesh(new THREE.SphereGeometry(0.08,10,10), new THREE.MeshBasicMaterial({color:0x111111})));
+    ax(new THREE.Vector3(1,0,0), COL.x); ax(new THREE.Vector3(0,1,0), COL.y); ax(new THREE.Vector3(0,0,1), COL.z);
+    refGroup.add(new THREE.Mesh(new THREE.SphereGeometry(0.05,8,8), new THREE.MeshBasicMaterial({color:0x111111})));
   }
   if(showCage){
-    const edges = new THREE.EdgesGeometry(new THREE.BoxGeometry(12,12,8));
-    refGroup.add(new THREE.LineSegments(edges, new THREE.LineBasicMaterial({color:0x999999, transparent:true, opacity:0.35})));
+    refGroup.add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(12,12,8)), new THREE.LineBasicMaterial({color:0xAAAAAA, transparent:true, opacity:0.28})));
   }
 }
-
-// builder for case
-function makeCaseBuilder(group){
+function builder(group){
   return {
     plane(kind,val,color, diagKind){
-      const geom = new THREE.PlaneGeometry(10,10);
-      const mat = new THREE.MeshBasicMaterial({color, transparent:true, opacity:0.52, side:THREE.DoubleSide, depthWrite:false});
-      const mesh = new THREE.Mesh(geom, mat);
-      const wire = new THREE.LineSegments(new THREE.EdgesGeometry(geom), new THREE.LineBasicMaterial({color:0x222222, transparent:true, opacity:0.32}));
-      if(kind==='z'){ mesh.position.z=val; wire.position.z=val+0.001; }
-      if(kind==='y'){ mesh.rotation.x=Math.PI/2; mesh.position.y=val; wire.rotation.x=Math.PI/2; wire.position.y=val+0.001; }
-      if(kind==='x'){ mesh.rotation.y=Math.PI/2; mesh.position.x=val; wire.rotation.y=Math.PI/2; wire.position.x=val+0.001; }
-      if(kind==='diag'){
-        if(diagKind==='x=y'){ mesh.rotation.y=Math.PI/4; wire.rotation.y=Math.PI/4; }
-        if(diagKind==='x+y'){ mesh.rotation.y=Math.PI/4; const s=val/Math.sqrt(2); mesh.position.x=s*0.7071; mesh.position.y=s*0.7071; wire.rotation.y=Math.PI/4; wire.position.copy(mesh.position); wire.position.z+=0.001; }
-      }
+      const geom=new THREE.PlaneGeometry(10,10);
+      const mat=new THREE.MeshBasicMaterial({color, transparent:true, opacity:0.48, side:THREE.DoubleSide, depthWrite:false});
+      const mesh=new THREE.Mesh(geom, mat);
+      const wire=new THREE.LineSegments(new THREE.EdgesGeometry(geom), new THREE.LineBasicMaterial({color:0x222222, transparent:true, opacity:0.24}));
+      if(kind==='z'){ mesh.position.z=val; wire.position.z=val+0.002; }
+      if(kind==='y'){ mesh.rotation.x=Math.PI/2; mesh.position.y=val; wire.rotation.x=Math.PI/2; wire.position.y=val+0.002; }
+      if(kind==='x'){ mesh.rotation.y=Math.PI/2; mesh.position.x=val; wire.rotation.y=Math.PI/2; wire.position.x=val+0.002; }
+      if(kind==='diag'){ if(diagKind==='x=y'){ mesh.rotation.y=Math.PI/4; wire.rotation.y=Math.PI/4; } if(diagKind==='x+y'){ mesh.rotation.y=Math.PI/4; const s=val/Math.SQRT2; mesh.position.set(s*0.7071,s*0.7071,0); wire.rotation.y=Math.PI/4; wire.position.copy(mesh.position); } }
       group.add(mesh); group.add(wire);
     },
     line(a,b,color=COL.line){
       const p0=new THREE.Vector3(...a), p1=new THREE.Vector3(...b);
       const curve=new THREE.LineCurve3(p0,p1);
-      const geo=new THREE.TubeGeometry(curve, 6, 0.09, 12, false);
+      const geo=new THREE.TubeGeometry(curve, 4, 0.035, 8, false); // thin now 0.035 not 0.09
       group.add(new THREE.Mesh(geo, new THREE.MeshBasicMaterial({color})));
     },
-    dot(x,y,z,r=0.24){
-      const s=new THREE.Mesh(new THREE.SphereGeometry(r,20,20), new THREE.MeshBasicMaterial({color:COL.dot}));
+    dot(x,y,z,r=0.14){
+      const s=new THREE.Mesh(new THREE.SphereGeometry(r,16,16), new THREE.MeshBasicMaterial({color:COL.dot}));
       s.position.set(x,y,z); group.add(s);
-      const halo=new THREE.Mesh(new THREE.SphereGeometry(r*2.4,14,14), new THREE.MeshBasicMaterial({color:COL.dot, transparent:true, opacity:0.20}));
+      const halo=new THREE.Mesh(new THREE.SphereGeometry(r*2.0,12,12), new THREE.MeshBasicMaterial({color:COL.dot, transparent:true, opacity:0.16}));
       halo.position.set(x,y,z); group.add(halo);
     },
     dashed(a,b){
       const geo=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(...a), new THREE.Vector3(...b)]);
-      const mat=new THREE.LineDashedMaterial({color:0x8E8E8E, dashSize:0.24, gapSize:0.18, transparent:true, opacity:0.9});
+      const mat=new THREE.LineDashedMaterial({color:0x8E8E8E, dashSize:0.18, gapSize:0.14, transparent:true, opacity:0.7});
       const l=new THREE.Line(geo,mat); l.computeLineDistances(); group.add(l);
     }
   };
 }
 
-// UI wiring
-const tabs = document.getElementById('tabs');
-const listEl = document.getElementById('list');
-const jumpSel = document.getElementById('jump');
-let activeCat = 'two-lines';
-let activeId = '2L-1';
-
-function populateJump(){
-  jumpSel.innerHTML = CASES.map(c=>`<option value="${c.id}">${c.id} — ${c.name}</option>`).join('');
-}
+// UI
+const tabs=document.getElementById('tabs'), listEl=document.getElementById('list'), jumpSel=document.getElementById('jump');
+let activeCat='two-lines', activeId='2L-1';
+function populateJump(){ jumpSel.innerHTML=CASES.map(c=>`<option value="${c.id}">${c.id} — ${c.name}</option>`).join(''); }
 function renderList(){
-  const filtered = CASES.filter(c=>c.cat===activeCat);
-  listEl.innerHTML = filtered.map(c=>`
-    <div class="case-item ${c.id===activeId?'active':''}" data-id="${c.id}">
-      <div class="top-row"><span class="id">${c.id} — ${c.name}</span><span class="recon">${c.recon}</span></div>
-      <div class="mut">${c.note} · ${c.math}</div>
-    </div>`).join('');
-  listEl.querySelectorAll('.case-item').forEach(el=>{
-    el.addEventListener('click', ()=>{ setActive(el.dataset.id); });
-  });
+  const f=CASES.filter(c=>c.cat===activeCat);
+  listEl.innerHTML=f.map(c=>`<div class="case-item ${c.id===activeId?'active':''}" data-id="${c.id}"><div class="topline"><span class="id">${c.id} — ${c.name}</span><span class="recon">${c.recon}</span></div><div class="mut">${c.note} · ${c.math}</div></div>`).join('');
+  listEl.querySelectorAll('.case-item').forEach(el=> el.addEventListener('click', ()=> setActive(el.dataset.id)));
 }
 function setActive(id){
-  activeId = id;
-  const c = CASES.find(x=>x.id===id);
-  if(!c) return;
-  activeCat = c.cat;
+  activeId=id; const c=CASES.find(x=>x.id===id); if(!c) return;
+  activeCat=c.cat;
   tabs.querySelectorAll('button').forEach(b=>b.classList.toggle('active', b.dataset.cat===activeCat));
-  renderList();
-  jumpSel.value = id;
-  document.getElementById('cur-id').textContent = c.id;
-  document.getElementById('cur-name').textContent = c.name;
-  document.getElementById('cur-recon').textContent = c.recon;
-  document.getElementById('cur-note').textContent = c.note + ' · ' + c.why;
-  document.getElementById('cur-math').textContent = c.math;
-  document.getElementById('pill-math').innerHTML = `<b>${c.id} — ${c.math}</b>`;
-  document.getElementById('pill-why').innerHTML = `<b>Why:</b> ${c.why}`;
-  // rebuild case
-  scene.remove(caseGroup);
-  caseGroup = new THREE.Group(); scene.add(caseGroup);
-  const builder = makeCaseBuilder(caseGroup);
-  c.build(builder);
+  renderList(); jumpSel.value=id;
+  document.getElementById('cur-id').textContent=c.id;
+  document.getElementById('cur-name').textContent=c.name;
+  document.getElementById('cur-recon').textContent=c.recon;
+  document.getElementById('cur-note').textContent=c.note+' · '+c.why;
+  document.getElementById('cur-math').textContent=c.math;
+  document.getElementById('pill-math').innerHTML=`<b>${c.id} — ${c.math}</b>`;
+  document.getElementById('pill-why').innerHTML=`<b>Why:</b> ${c.why}`;
+  scene.remove(caseGroup); caseGroup=new THREE.Group(); scene.add(caseGroup);
+  c.build(builder(caseGroup));
 }
-
-tabs.addEventListener('click', e=>{
-  if(e.target.tagName!=='BUTTON') return;
-  activeCat = e.target.dataset.cat;
-  tabs.querySelectorAll('button').forEach(b=>b.classList.toggle('active', b.dataset.cat===activeCat));
-  const first = CASES.find(c=>c.cat===activeCat);
-  if(first) activeId = first.id;
-  renderList();
-  setActive(activeId);
-});
+tabs.addEventListener('click', e=>{ if(e.target.tagName!=='BUTTON') return; activeCat=e.target.dataset.cat; const first=CASES.find(c=>c.cat===activeCat); activeId=first.id; tabs.querySelectorAll('button').forEach(b=>b.classList.toggle('active', b.dataset.cat===activeCat)); renderList(); setActive(activeId); });
 jumpSel.addEventListener('change', ()=> setActive(jumpSel.value));
+document.getElementById('toggle-xy').addEventListener('change', e=> buildRef(e.target.checked, document.getElementById('toggle-axes').checked, document.getElementById('toggle-cage').checked));
+document.getElementById('toggle-axes').addEventListener('change', e=> buildRef(document.getElementById('toggle-xy').checked, e.target.checked, document.getElementById('toggle-cage').checked));
+document.getElementById('toggle-cage').addEventListener('change', e=> buildRef(document.getElementById('toggle-xy').checked, document.getElementById('toggle-axes').checked, e.target.checked));
 
-document.getElementById('toggle-xy').addEventListener('change', e=>{ buildRef(e.target.checked, document.getElementById('toggle-axes').checked, document.getElementById('toggle-cage').checked); });
-document.getElementById('toggle-axes').addEventListener('change', e=>{ buildRef(document.getElementById('toggle-xy').checked, e.target.checked, document.getElementById('toggle-cage').checked); });
-document.getElementById('toggle-cage').addEventListener('change', e=>{ buildRef(document.getElementById('toggle-xy').checked, document.getElementById('toggle-axes').checked, e.target.checked); });
-
-// orbit controls manual
-let isDragging=false, prevX=0, prevY=0, theta=-0.95, phi=1.0, radius=Math.hypot(7,8,5);
-function updateCam(){ const x=radius*Math.sin(phi)*Math.cos(theta); const y=radius*Math.sin(phi)*Math.sin(theta); const z=radius*Math.cos(phi); camera.position.set(x,y,z); camera.lookAt(0,0,0); }
-updateCam();
-viewer.addEventListener('pointerdown', e=>{ isDragging=true; prevX=e.clientX; prevY=e.clientY; viewer.setPointerCapture(e.pointerId); });
-viewer.addEventListener('pointerup', ()=> isDragging=false);
-viewer.addEventListener('pointermove', e=>{
-  if(!isDragging) return;
-  const dx=e.clientX-prevX, dy=e.clientY-prevY; prevX=e.clientX; prevY=e.clientY;
-  theta-=dx*0.007; phi=Math.max(0.12, Math.min(Math.PI-0.12, phi+dy*0.007)); updateCam();
-});
-viewer.addEventListener('wheel', e=>{ e.preventDefault(); radius=Math.max(1.4, Math.min(20, radius+e.deltaY*0.01)); updateCam(); }, {passive:false});
-
-function resize(){
-  const r=viewer.getBoundingClientRect(); renderer.setSize(r.width, r.height, false); camera.aspect=r.width/r.height; camera.updateProjectionMatrix();
+// smooth orbit - improved zoom (dolly, not z change harsh)
+let isDown=false, prev={x:0,y:0}, theta=-0.95, phi=1.0, radius=9.5, target=new THREE.Vector3(0,0,0), panOffset=new THREE.Vector3();
+function updateCam(){
+  const x=radius*Math.sin(phi)*Math.cos(theta), y=radius*Math.sin(phi)*Math.sin(theta), z=radius*Math.cos(phi);
+  camera.position.set(x,y,z).add(panOffset).add(target);
+  camera.lookAt(target.clone().add(panOffset));
 }
-resize(); window.addEventListener('resize', resize);
-
-function animate(){ requestAnimationFrame(animate); renderer.render(scene,camera); }
-animate();
-
-// init
-populateJump();
-buildRef(true,true,false);
-renderList();
-setActive('2L-1');
-
-// keyboard nav
-window.addEventListener('keydown', e=>{
-  if(e.key==='ArrowDown' || e.key==='ArrowUp'){
-    const idx=CASES.findIndex(c=>c.id===activeId);
-    const n = e.key==='ArrowDown' ? Math.min(CASES.length-1, idx+1) : Math.max(0, idx-1);
-    setActive(CASES[n].id);
+updateCam();
+let isPanning=false;
+viewer.addEventListener('pointerdown', e=>{
+  isDown=true; prev={x:e.clientX,y:e.clientY}; isPanning=e.button===2 || e.shiftKey; viewer.setPointerCapture(e.pointerId);
+});
+viewer.addEventListener('pointerup', ()=> isDown=false);
+viewer.addEventListener('pointermove', e=>{
+  if(!isDown) return;
+  const dx=e.clientX-prev.x, dy=e.clientY-prev.y; prev={x:e.clientX,y:e.clientY};
+  if(isPanning){
+    const right=new THREE.Vector3().setFromMatrixColumn(camera.matrix,0).multiplyScalar(-dx*0.008*radius/9);
+    const up=new THREE.Vector3().setFromMatrixColumn(camera.matrix,1).multiplyScalar(dy*0.008*radius/9);
+    panOffset.add(right).add(up);
+  } else {
+    theta-=dx*0.006; phi=Math.max(0.15, Math.min(Math.PI-0.15, phi+dy*0.006));
   }
+  updateCam();
+});
+viewer.addEventListener('wheel', e=>{
+  e.preventDefault();
+  // smooth exponential dolly, not linear
+  const factor = Math.exp(e.deltaY * 0.0009);
+  radius = Math.max(1.2, Math.min(22, radius * factor));
+  updateCam();
+}, {passive:false});
+viewer.addEventListener('contextmenu', e=> e.preventDefault());
+
+function resize(){ const r=viewer.getBoundingClientRect(); renderer.setSize(r.width,r.height,false); camera.aspect=r.width/r.height; camera.updateProjectionMatrix(); }
+resize(); window.addEventListener('resize', resize);
+function loop(){ requestAnimationFrame(loop); renderer.render(scene,camera); } loop();
+
+populateJump(); buildRef(true,true,false); renderList(); setActive('2L-1');
+window.addEventListener('keydown', e=>{
+  if(e.key==='ArrowDown' || e.key==='ArrowUp'){ const i=CASES.findIndex(c=>c.id===activeId); const n=e.key==='ArrowDown'?Math.min(CASES.length-1,i+1):Math.max(0,i-1); setActive(CASES[n].id); }
 });
 </script>
 </body>
