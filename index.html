@@ -5,273 +5,327 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>MCV4U — Intersections</title>
 <script type="importmap">
-{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}
+{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js"}}
 </script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@400;500&display=swap');
-  :root{--bg:#fcfaf7;--fg:#101010;--mut:#8c8a87;--line:#e9e3dc;--line2:#111;--vp:#f2ece2}
+  :root{--bg:#f9f5ee;--fg:#0f0f0f;--mut:#8a8884;--line:#e7ddd0;--line2:#111;--vp:#efe7db}
   *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth}
-  body{background:var(--bg);color:var(--fg);font:13px/1.55 "Geist Mono", ui-monospace, monospace}
-  .wrap{max-width:1360px;margin:0 auto;padding:0 22px}
-  .top{border-bottom:1.5px solid var(--line2);padding:20px 0 14px;display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap}
-  .top h1{font-family:"Instrument Serif", Georgia, serif;font-size:38px;font-weight:400;letter-spacing:-.03em;line-height:.92}
-  .top h1 i{font-style:italic;color:#5a5a5a}
-  .top .right{font-size:10.5px;color:var(--mut);text-transform:uppercase;letter-spacing:.07em;line-height:1.55;text-align:right}
-  .top nav{width:100%;display:flex;gap:20px;padding-top:14px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;border-top:1px solid var(--line);margin-top:12px;padding-bottom:2px}
-  .top nav a{color:var(--fg);text-decoration:none;border-bottom:1px solid transparent;padding-bottom:2px}
-  .top nav a:hover{border-bottom-color:var(--fg)}
-  .cat{padding:32px 0 0;border-top:1.5px solid var(--line2);margin-top:36px}
-  .cat:first-of-type{margin-top:22px}
-  .cat-h{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:6px}
-  .cat-h h2{font-family:"Instrument Serif", serif;font-size:26px;font-weight:400;letter-spacing:-.01em}
-  .cat-h span{font-size:10px;color:var(--mut);letter-spacing:.08em;text-transform:uppercase}
-  .cat-desc{font-size:11px;color:var(--mut);max-width:68ch;margin:0 0 18px;line-height:1.6}
-  /* grid: bigger cells */
-  .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:1px;background:var(--line2);border:1.5px solid var(--line2)}
-  .cell{grid-column:span 6;background:var(--bg);display:flex;flex-direction:column}
-  @media(max-width:900px){.cell{grid-column:span 12}}
-  @media(min-width:1220px){.cell{grid-column:span 3}}
-  .cell-head{padding:11px 14px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;align-items:baseline}
-  .cell-head h3{font-size:11.5px;font-weight:600;letter-spacing:.01em;line-height:1.3}
-  .cell-head .id{font-size:10px;color:var(--mut);white-space:nowrap}
-  .viewport{flex:1;position:relative;background:var(--vp);min-height:360px;overflow:hidden}
-  .viewport canvas{display:block;width:100%;height:100%}
-  .vp-label{position:absolute;left:10px;top:8px;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#8a8884;background:rgba(252,250,247,.85);border:1px solid var(--line);padding:2px 6px;pointer-events:none}
-  .axis-legend{position:absolute;right:10px;bottom:8px;font-size:9px;color:#8a8884;background:rgba(252,250,247,.9);border:1px solid var(--line);padding:4px 6px;line-height:1.4;pointer-events:none}
-  .axis-legend b{color:var(--fg)}
-  .cell-foot{padding:9px 14px;border-top:1px solid var(--line);font-size:10px;color:var(--mut);line-height:1.45;display:flex;justify-content:space-between;gap:8px}
-  .cell-foot b{color:var(--fg);font-weight:600}
-  .plan{margin-top:36px;border:1.5px solid var(--line2)}
-  .plan-h{padding:12px 14px;border-bottom:1.5px solid var(--line2);display:flex;justify-content:space-between;align-items:baseline}
-  .plan-h h2{font-family:"Instrument Serif", serif;font-size:20px;font-weight:400}
-  .plan-h span{font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.08em}
-  .plan-b table{width:100%;border-collapse:collapse}
-  .plan-b th{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);text-align:left;padding:9px 14px;border-bottom:1px solid var(--line);font-weight:600}
-  .plan-b td{font-size:11px;padding:9px 14px;border-bottom:1px solid var(--line);vertical-align:top}
-  .plan-note{padding:16px 14px;display:grid;grid-template-columns:1fr 1fr;gap:20px;font-size:11px;color:var(--mut);line-height:1.6}
-  @media(max-width:700px){.plan-note{grid-template-columns:1fr}}
-  .plan-note b{color:var(--fg);font-weight:600}
-  .plan-note ul{margin:4px 0 0 14px}
-  footer{padding:22px 0 48px;font-size:10px;color:var(--mut);border-top:1.5px solid var(--line2);margin-top:36px;display:flex;justify-content:space-between}
+  html,body{height:100%}
+  body{background:var(--bg);color:var(--fg);font:12.5px/1.5 "Geist Mono",monospace;overflow:hidden}
+  .app{display:grid;grid-template-columns:320px 1fr;grid-template-rows:auto 1fr; height:100vh; width:100vw}
+  header{grid-column:1 / -1;border-bottom:1.5px solid var(--line2);padding:14px 18px;display:flex;justify-content:space-between;align-items:baseline;background:var(--bg);z-index:2}
+  header h1{font-family:"Instrument Serif",serif;font-size:28px;font-weight:400;letter-spacing:-.02em}
+  header h1 i{font-style:italic;color:#6a6a6a}
+  header .meta{font-size:9.5px;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;text-align:right;line-height:1.5}
+  /* sidebar */
+  .side{border-right:1.5px solid var(--line2);background:#fcfaf7;display:flex;flex-direction:column;overflow:hidden}
+  .side-top{padding:14px;border-bottom:1px solid var(--line)}
+  .side-top label{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--mut);display:block;margin-bottom:6px}
+  select{width:100%;font:11px "Geist Mono",monospace;padding:8px 10px;border:1px solid var(--line2);background:var(--bg);color:var(--fg);border-radius:0;outline:none}
+  select:focus{border-color:var(--fg)}
+  .cat-tabs{display:flex;gap:0;border-bottom:1.5px solid var(--line2)}
+  .cat-tabs button{flex:1;background:transparent;border:0;border-right:1px solid var(--line2);padding:9px 6px;font:9px "Geist Mono",monospace;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;color:var(--mut)}
+  .cat-tabs button:last-child{border-right:0}
+  .cat-tabs button.active{background:var(--fg);color:var(--bg)}
+  .case-list{flex:1;overflow:auto}
+  .case-item{padding:10px 14px;border-bottom:1px solid var(--line);cursor:pointer;display:flex;flex-direction:column;gap:2px}
+  .case-item:hover{background:var(--vp)}
+  .case-item.active{background:#0f0f0f;color:#fcfaf7}
+  .case-item.active .mut{color:#a8a5a1}
+  .case-item .top-row{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+  .case-item .id{font-weight:600;font-size:11px}
+  .case-item .recon{font-size:8px;letter-spacing:.08em;text-transform:uppercase;padding:2px 5px;background:#111;color:#fff;display:inline-block}
+  .case-item.active .recon{background:#fff;color:#111}
+  .case-item .mut{font-size:9.5px;color:var(--mut);line-height:1.4}
+  .side-foot{border-top:1.5px solid var(--line2);padding:12px 14px;background:var(--bg)}
+  .side-foot .row{display:flex;justify-content:space-between;font-size:9.5px;color:var(--mut);margin-bottom:4px}
+  .side-foot .row b{color:var(--fg);font-weight:600}
+  .side-foot .check{font-size:10px;display:flex;align-items:center;gap:6px;margin-top:8px;cursor:pointer}
+  .side-foot input{accent-color:var(--fg)}
+  /* main viewer */
+  .viewer{position:relative;background:var(--vp);overflow:hidden;display:flex;flex-direction:column}
+  #c{width:100%;height:100%;display:block;flex:1}
+  .overlay{position:absolute;left:12px;top:12px;z-index:2;pointer-events:none;display:flex;flex-direction:column;gap:8px}
+  .pill{font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;background:rgba(252,250,247,.94);border:1px solid var(--line);padding:4px 8px;color:var(--mut)}
+  .pill b{color:var(--fg)}
+  .axes-legend{position:absolute;right:12px;bottom:12px;z-index:2;pointer-events:none;background:rgba(252,250,247,.94);border:1px solid var(--line);padding:6px 8px;font-size:9px;line-height:1.5;color:var(--mut)}
+  .control-hint{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:2;background:#111;color:#fff;font-size:9px;letter-spacing:.08em;text-transform:uppercase;padding:5px 10px;pointer-events:none}
+  /* mobile */
+  @media(max-width:800px){
+    .app{grid-template-columns:1fr;grid-template-rows:auto auto 1fr}
+    body{overflow:auto}
+    .app{height:auto;min-height:100vh}
+    .side{border-right:0;border-bottom:1.5px solid var(--line2);max-height:52vh}
+    .viewer{height:78vh}
+    #c{height:100%}
+  }
 </style>
 </head>
 <body>
-<div class="wrap">
-<div class="top">
-  <h1>Intersections <i>in 3-space</i><br>— MCV4U1</h1>
-  <div class="right">Due Nov 12 2026 · 18 cases · 6 members<br>Three.js · thicker lines · labelled axes<br><a href="https://github.com/Vasiniks/calc-model-thing" style="color:inherit">github</a> · drag = orbit · scroll = zoom</div>
-  <nav>
-    <a href="#two-lines">Two lines — 4</a>
-    <a href="#line-plane">Line & plane — 3</a>
-    <a href="#two-planes">Two planes — 3</a>
-    <a href="#three-planes">Three planes — 8</a>
-    <a href="#planning">Planning</a>
-  </nav>
-</div>
-
-<div class="cat" id="two-lines">
-  <div class="cat-h"><h2>Two lines</h2><span>4 exhaustive</span></div>
-  <div class="cat-desc">Parallel test via cross product. If not parallel, coplanarity check → intersecting vs skew. If parallel, coincident test via vector between points. Covers all of R³.</div>
-  <div class="grid" id="grid-two-lines"></div>
-</div>
-<div class="cat" id="line-plane">
-  <div class="cat-h"><h2>Line & plane</h2><span>3 cases</span></div>
-  <div class="cat-desc">n·d ≠ 0 → single point. n·d = 0 and P₀∈π → line lies in plane. Otherwise parallel no intersection.</div>
-  <div class="grid" id="grid-line-plane"></div>
-</div>
-<div class="cat" id="two-planes">
-  <div class="cat-h"><h2>Two planes</h2><span>3 cases</span></div>
-  <div class="cat-desc">Normals non-parallel → line of intersection. Normals parallel → check scalar D for coincident vs distinct.</div>
-  <div class="grid" id="grid-two-planes"></div>
-</div>
-<div class="cat" id="three-planes">
-  <div class="cat-h"><h2>Three planes</h2><span>8 cases — Ontario table</span></div>
-  <div class="cat-desc">General position point; pencil of planes sharing a line; triangular prism (pairwise lines, no common); two parallel cut by transversal (2 parallel lines); coincident pair+cutting line; coincident pair+parallel ∄; all coincident; all parallel distinct.</div>
-  <div class="grid" id="grid-three-planes"></div>
-</div>
-
-<div class="plan" id="planning">
-  <div class="plan-h"><h2>Build & allocation</h2><span>6 members · consistent look</span></div>
-  <div class="plan-b"><table>
-    <tr><th>Member</th><th>Models</th><th>Build notes</th></tr>
-    <tr><td>M1 — 2 lines</td><td>2L-1..4 (4)</td><td>Stand + label template. Colour: blue/green planes, black skewers, red intersections</td></tr>
-    <tr><td>M2 — line∩plane</td><td>LP-1..3 (3)</td><td>Exhaustiveness justification</td></tr>
-    <tr><td>M3 — 2 planes</td><td>2P-1..3 (3)</td><td>Photos, poster</td></tr>
-    <tr><td>M4 — 3 planes A</td><td>3P-1..4 (4)</td><td>Materials, summary draft</td></tr>
-    <tr><td>M5 — 3 planes B</td><td>3P-5..8 (4)</td><td>Completeness check</td></tr>
-    <tr><td>M6 — editor</td><td>QA all 18</td><td>Site, logs, presentation</td></tr>
-  </table></div>
-  <div class="plan-note">
-    <div><b>Physical spec</b><ul><li>Planes: foamcore + translucent cardstock 20cm+ visible back row</li><li>Lines: wooden skewers, hot glue, base with slits — no hands</li><li>Labels: parametric + scalar + normals, same typeface all models</li></ul>
-    <div style="margin-top:12px"><b>Timeline</b><ul><li>Nov 2–3 buy & templates</li><li>Nov 4–6 build + photo check</li><li>Nov 7–8 label + stands</li><li>Nov 9 no-hands test</li><li>Nov 11 rehearsal</li><li>Nov 12 submit</li></ul></div></div>
-    <div><b>For site models</b><ul><li>Axes: X red, Y green, Z blue — labelled tips. Grid floor at z=-2.5 faint. Thicker lines via Line2 (AA).</li><li>Planes 7×7 units, opacity 0.38, edge wireframe 0.5. Lines width 4 px, dot 0.14 radius.</li><li>Camera: 3.6, -4.2, 2.6 initial, damped orbit, no pan.</li></ul></div>
+<div class="app">
+  <header>
+    <h1>Intersections <i>in 3-space</i> — MCV4U1</h1>
+    <div class="meta">18 cases · XY plane ref · tubes & halos ·<br><a href="https://github.com/Vasiniks/calc-model-thing" style="color:inherit">Vasiniks/calc-model-thing</a></div>
+  </header>
+  <div class="side">
+    <div class="side-top">
+      <label>Jump to case</label>
+      <select id="jump"></select>
+    </div>
+    <div class="cat-tabs" id="tabs">
+      <button data-cat="two-lines" class="active">Two lines — 4</button>
+      <button data-cat="line-plane">Line & plane — 3</button>
+      <button data-cat="two-planes">2 planes — 3</button>
+      <button data-cat="three-planes">3 planes — 8</button>
+    </div>
+    <div class="case-list" id="list"></div>
+    <div class="side-foot">
+      <div class="row"><span><b id="cur-id">2L-1</b> — <span id="cur-name">Intersecting</span></span><span id="cur-recon" style="background:#111;color:#fff;padding:2px 6px;font-size:8px">POINT</span></div>
+      <div class="row" style="color:#6a6a6a;line-height:1.5" id="cur-note">coplanar · 2 lines cross at origin</div>
+      <div class="row" id="cur-math" style="font-size:10px;color:#111">L1: (t,t,0) L2: (s,-s,0)</div>
+      <label class="check"><input type="checkbox" id="toggle-xy" checked> XY reference plane + grid</label>
+      <label class="check"><input type="checkbox" id="toggle-axes" checked> Axes X/Y/Z</label>
+      <label class="check"><input type="checkbox" id="toggle-cage"> Wire cage (bounds)</label>
+      <div style="margin-top:10px;font-size:9px;color:var(--mut);line-height:1.5">Build spec: blue/green/apricot translucent planes 9×9, black tube lines r=0.08, red dot + halo, dashed gray gap for skew/parallel offset. Drag orbit, scroll zoom, right-drag pan.</div>
+    </div>
   </div>
-</div>
-<footer><span>MCV4U1 · 18 models · Three.js minimal 2026</span><span>vasiniks.github.io/calc-model-thing</span></footer>
+  <div class="viewer" id="viewer">
+    <canvas id="c"></canvas>
+    <div class="overlay">
+      <div class="pill" id="pill-math"><b>Eq:</b> —</div>
+      <div class="pill" id="pill-why"><b>Why:</b> —</div>
+    </div>
+    <div class="axes-legend"><div style="color:#FF3B30">— X</div><div style="color:#18B07A">— Y</div><div style="color:#0A84FF">— Z</div><div style="margin-top:4px;color:#9a9a9a">XY ref at z=0 grid</div></div>
+    <div class="control-hint">drag · scroll · right-drag pan</div>
+  </div>
 </div>
 
 <script type="module">
 import * as THREE from "three";
-import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { Line2 } from "three/addons/lines/Line2.js";
-import { LineMaterial } from "three/addons/lines/LineMaterial.js";
-import { LineGeometry } from "three/addons/lines/LineGeometry.js";
 
-const COL = { p1:0x7A9CFF, p2:0x6FD8A0, p3:0xFFC06A, line1:0x0E0E0E, line2:0x4A4A4A, dot:0xE84040, x:0xFF4D4D, y:0x2DB87A, z:0x3A7DFF };
+const COL = { p1:0x6D92FF, p2:0x4ECCA0, p3:0xFFAD3D, line:0x0A0A0A, line2:0x444444, dot:0xE53935, x:0xFF3B30, y:0x18B07A, z:0x0A84FF, xy:0xCFC5B6 };
 
-const CASES = {
-"grid-two-lines":[
-{ id:"2L-1", name:"Intersecting — one point", note:"coplanar · L1∩L2 = {0,0,0}", b(c){ c.line([-3.2,-3.2,0],[3.2,3.2,0], COL.line1, 4); c.line([-3.2,3.2,0],[3.2,-3.2,0], COL.line2, 4); c.dot(0,0,0,0.16); }},
-{ id:"2L-2", name:"Parallel distinct", note:"d1∥d2 · offset 1.5", b(c){ c.line([-4,0,0],[4,0,0], COL.line1, 4); c.line([-4,1.6,0],[4,1.6,0], COL.line2, 4); }},
-{ id:"2L-3", name:"Skew — non-coplanar", note:"never meet, not parallel", b(c){ c.line([-4,0,0],[4,0,0], COL.line1, 4); c.line([0,1.8,-3.2],[0,1.8,3.2], COL.line2, 4); c.dashed([0,0,0],[0,1.8,0], 0xBBBBBB); }},
-{ id:"2L-4", name:"Coincident", note:"same line", b(c){ c.line([-4,-4,-4],[4,4,4], COL.line1, 5); c.line([-4.08,-4.08,-4.08],[4.08,4.08,4.08], COL.line2, 3, true); }},
-],
-"grid-line-plane":[
-{ id:"LP-1", name:"Line cuts plane — point", note:"n·d ≠ 0 · z=0 × (t,0,t)", b(c){ c.plane('z',0, COL.p1); c.line([-3,0,-3],[3,0,3], COL.line1, 4); c.dot(0,0,0,0.16); }},
-{ id:"LP-2", name:"Line ∥ plane — 0 pts", note:"n·d=0 · P0∉π · z=0 ∥ (t,0,1)", b(c){ c.plane('z',0, COL.p1); c.line([-4,0,1.2],[4,0,1.2], COL.line1, 4); c.dashed([0,0,0],[0,0,1.2], 0xAAAAAA); }},
-{ id:"LP-3", name:"Line in plane — ∞", note:"n·d=0 · P0∈π · L⊂π", b(c){ c.plane('z',0, COL.p1); c.line([-4,0,0],[4,0,0], COL.line1, 4.5); }},
-],
-"grid-two-planes":[
-{ id:"2P-1", name:"Intersect — line", note:"z=0 ∩ y=0 = x-axis", b(c){ c.plane('z',0,COL.p1); c.plane('y',0,COL.p2); c.line([-4,0,0],[4,0,0], COL.line1, 4.5); c.dot(0,0,0,0.12); }},
-{ id:"2P-2", name:"Parallel distinct", note:"z=0 ∥ z=1.4", b(c){ c.plane('z',0,COL.p1); c.plane('z',1.6,COL.p2); }},
-{ id:"2P-3", name:"Coincident", note:"same plane · offset viz", b(c){ c.plane('z',0,COL.p1); c.plane('z',0.1,COL.p2); }},
-],
-"grid-three-planes":[
-{ id:"3P-1", name:"1 — Single point", note:"x=0,y=0,z=0 → (0,0,0)", b(c){ c.plane('x',0,COL.p1); c.plane('y',0,COL.p2); c.plane('z',0,COL.p3); c.dot(0,0,0,0.18); }},
-{ id:"3P-2", name:"2 — Line (pencil)", note:"x=0,y=0,x=y → z-axis", b(c){ c.plane('x',0,COL.p1); c.plane('y',0,COL.p2); c.plane('diag',0,COL.p3, 'x=y'); c.line([0,0,-4],[0,0,4], COL.line1, 5); }},
-{ id:"3P-3", name:"3 — Triangular prism", note:"x=0,y=0,x+y=1 · no common", b(c){ c.plane('x',0,COL.p1); c.plane('y',0,COL.p2); c.plane('diag',1,COL.p3,'x+y'); }},
-{ id:"3P-4", name:"4 — Two ∥ + transversal", note:"z=0,z=1.6,y=0 → 2 ∥ lines", b(c){ c.plane('z',0,COL.p1); c.plane('z',1.6,COL.p2); c.plane('y',0,COL.p3); c.line([-4,0,0],[4,0,0], COL.line1, 4); c.line([-4,0,1.6],[4,0,1.6], COL.line1, 4); }},
-{ id:"3P-5", name:"5 — Coincident pair + cutting → line", note:"z=0,z≈0,y=0", b(c){ c.plane('z',0,COL.p1); c.plane('z',0.12,COL.p2); c.plane('y',0,COL.p3); c.line([-4,0,0],[4,0,0], COL.line1, 4.5); }},
-{ id:"3P-6", name:"6 — Coincident pair + ∥ → ∅", note:"z=0,z≈0,z=1.6", b(c){ c.plane('z',0,COL.p1); c.plane('z',0.12,COL.p2); c.plane('z',1.6,COL.p3); }},
-{ id:"3P-7", name:"7 — All coincident", note:"one plane ×3", b(c){ c.plane('z',0,COL.p1); c.plane('z',0.08,COL.p2); c.plane('z',0.16,COL.p3); }},
-{ id:"3P-8", name:"8 — All parallel distinct", note:"z=0,z=1,z=2", b(c){ c.plane('z',0,COL.p1); c.plane('z',1,COL.p2); c.plane('z',2,COL.p3); }},
-],
-};
+const CASES = [
+  {cat:"two-lines", id:"2L-1", name:"Intersecting — one point", note:"coplanar · 2 lines cross at origin", recon:"POINT", math:"L1:(t,t,0) L2:(s,-s,0)", why:"d1×d2≠0, (p2-p1)·(d1×d2)=0 → one solution",
+    build(c){ c.line([-6,-6,0],[6,6,0]); c.line([-6,6,0],[6,-6,0], COL.line2); c.dot(0,0,0); }},
+  {cat:"two-lines", id:"2L-2", name:"Parallel distinct", note:"∥ · offset 1.8, never meet", recon:"NO INT", math:"L1:(t,0,0) L2:(t,1.8,0)", why:"d1×d2=0, (p2-p1)×d1≠0 → distinct parallel",
+    build(c){ c.line([-7,0,0],[7,0,0]); c.line([-7,2.2,0],[7,2.2,0], COL.line2); }},
+  {cat:"two-lines", id:"2L-3", name:"Skew — non-coplanar", note:"never meet, not parallel, gap shown", recon:"SKEW ∅", math:"L1:(t,0,0) L2:(0,2.6,s)", why:"d1×d2≠0, (p2-p1)·(d1×d2)≠0 → skew",
+    build(c){ c.line([-7,0,0],[7,0,0]); c.line([0,2.6,-6],[0,2.6,6], COL.line2); c.dashed([0,0,0],[0,2.6,0]); }},
+  {cat:"two-lines", id:"2L-4", name:"Coincident", note:"same infinite line", recon:"LINE ∞", math:"L1=L2:(t,t,t)", why:"d1×d2=0, (p2-p1)×d1=0 → same line",
+    build(c){ c.line([-6,-6,-6],[6,6,6]); c.line([-6.1,-6.1,-6.1],[6.1,6.1,6.1], COL.line2); }},
 
-function makeAxes(scene, size=3.6){
-  const g = new THREE.Group();
-  function arrow(dir, color, label){
-    const o = new THREE.Vector3(0,0,0);
-    const d = dir.clone().normalize().multiplyScalar(size);
-    // shaft using Line2 for thickness
-    const geom = new LineGeometry(); geom.setPositions([o.x,o.y,o.z, d.x*0.92, d.y*0.92, d.z*0.92]);
-    const mat = new LineMaterial({color, linewidth:3, resolution: new THREE.Vector2(400,400)});
-    const line = new Line2(geom, mat); g.add(line);
-    // cone head
-    const cone = new THREE.Mesh(new THREE.ConeGeometry(0.09,0.22,12), new THREE.MeshBasicMaterial({color}));
-    cone.position.copy(dir.clone().normalize().multiplyScalar(size));
-    // orient cone towards direction
-    cone.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), dir.clone().normalize());
-    g.add(cone);
+  {cat:"line-plane", id:"LP-1", name:"Line cuts plane — point", note:"n·d≠0 · hits z=0 at origin", recon:"POINT", math:"π:z=0 L:(t,0,t)", why:"n·d =1 ≠0, solve t=0",
+    build(c){ c.plane('z',0,COL.p1); c.line([-5,0,-5],[5,0,5]); c.dot(0,0,0); }},
+  {cat:"line-plane", id:"LP-2", name:"Line ∥ plane — 0 pts", note:"above z=0, parallel offset", recon:"NO INT", math:"π:z=0 L:(t,0,1.8)", why:"n·d=0, p0∉π → no solution",
+    build(c){ c.plane('z',0,COL.p1); c.line([-7,0,1.8],[7,0,1.8]); c.dashed([0,0,0],[0,0,1.8]); }},
+  {cat:"line-plane", id:"LP-3", name:"Line in plane — ∞", note:"L ⊂ z=0 entirely", recon:"CONTAINED", math:"π:z=0 L:(t,0,0) ⊂ π", why:"n·d=0, p0∈π → infinite",
+    build(c){ c.plane('z',0,COL.p1); c.line([-7,0,0],[7,0,0]); }},
+
+  {cat:"two-planes", id:"2P-1", name:"Intersect — line", note:"y=0 ∩ z=0 = x-axis", recon:"LINE", math:"π1:z=0 π2:y=0 → L:x-axis", why:"n1×n2≠0 → line",
+    build(c){ c.plane('z',0,COL.p1); c.plane('y',0,COL.p2); c.line([-7,0,0],[7,0,0]); }},
+  {cat:"two-planes", id:"2P-2", name:"Parallel distinct", note:"z=0 ∥ z=1.8, no meet", recon:"NO INT", math:"z=0 ∥ z=1.8", why:"n1∥n2, D1≠D2",
+    build(c){ c.plane('z',0,COL.p1); c.plane('z',1.8,COL.p2); }},
+  {cat:"two-planes", id:"2P-3", name:"Coincident", note:"same plane shown with tiny offset", recon:"PLANE ∞", math:"π1=π2: z=0", why:"n1∥n2, D1=D2",
+    build(c){ c.plane('z',0,COL.p1); c.plane('z',0.16,COL.p2); }},
+
+  {cat:"three-planes", id:"3P-1", name:"1 — Single point", note:"x=0,y=0,z=0 → origin", recon:"POINT", math:"x=0,y=0,z=0 → (0,0,0)", why:"3 normals independent, det≠0",
+    build(c){ c.plane('x',0,COL.p1); c.plane('y',0,COL.p2); c.plane('z',0,COL.p3); c.dot(0,0,0,0.28); }},
+  {cat:"three-planes", id:"3P-2", name:"2 — Line (pencil of planes)", note:"all contain z-axis: x=0,y=0,x=y", recon:"LINE", math:"x=0,y=0,x=y → z-axis", why:"all contain same line, normals coplanar but not parallel",
+    build(c){ c.plane('x',0,COL.p1); c.plane('y',0,COL.p2); c.plane('diag',0,COL.p3,'x=y'); c.line([0,0,-7],[0,0,7]); }},
+  {cat:"three-planes", id:"3P-3", name:"3 — Triangular prism (pairwise, no common)", note:"x=0,y=0,x+y=1 · tunnel", recon:"PRISM ∅", math:"x=0,y=0,x+y=1 → ∅ common", why:"pairwise intersect in 3 parallel lines? no - pairwise meet but no common pt, forms triangular prism",
+    build(c){ c.plane('x',0,COL.p1); c.plane('y',0,COL.p2); c.plane('diag',1,COL.p3,'x+y'); }},
+  {cat:"three-planes", id:"3P-4", name:"4 — Two ∥ + transversal", note:"z=0,z=1.8,y=0 → 2 ∥ lines", recon:"2 LINES ∥", math:"z=0,z=1.8,y=0", why:"two parallel cut by third → two parallel lines",
+    build(c){ c.plane('z',0,COL.p1); c.plane('z',1.8,COL.p2); c.plane('y',0,COL.p3); c.line([-7,0,0],[7,0,0]); c.line([-7,0,1.8],[7,0,1.8]); }},
+  {cat:"three-planes", id:"3P-5", name:"5 — Coincident pair + cutting → line", note:"double z=0 ∩ y=0", recon:"LINE", math:"z=0 (×2) ∩ y=0 → x-axis", why:"coincident pair cut by third → line within double plane",
+    build(c){ c.plane('z',0,COL.p1); c.plane('z',0.16,COL.p2); c.plane('y',0,COL.p3); c.line([-7,0,0],[7,0,0]); }},
+  {cat:"three-planes", id:"3P-6", name:"6 — Coincident pair + ∥ third → ∅", note:"double z=0 ∥ z=1.8", recon:"NO INT", math:"z=0 ×2 ∥ z=1.8 → ∅", why:"coincident pair parallel distinct from third",
+    build(c){ c.plane('z',0,COL.p1); c.plane('z',0.16,COL.p2); c.plane('z',1.8,COL.p3); }},
+  {cat:"three-planes", id:"3P-7", name:"7 — All coincident", note:"z=0 ×3 · whole plane", recon:"PLANE", math:"all z=0", why:"all same D after scaling",
+    build(c){ c.plane('z',0,COL.p1); c.plane('z',0.12,COL.p2); c.plane('z',0.24,COL.p3); }},
+  {cat:"three-planes", id:"3P-8", name:"8 — All parallel distinct", note:"z=0,1.3,2.6", recon:"NO INT", math:"z=0,z=1.3,z=2.6 → ∅", why:"all normals parallel, all D distinct",
+    build(c){ c.plane('z',0,COL.p1); c.plane('z',1.3,COL.p2); c.plane('z',2.6,COL.p3); }},
+];
+
+const viewer = document.getElementById('viewer');
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({canvas, antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xEFE7DB);
+const camera = new THREE.PerspectiveCamera(24, 1, 0.1, 100);
+camera.position.set(7, -8, 5);
+const ambient = new THREE.AmbientLight(0xffffff, 1); scene.add(ambient);
+
+// global groups that persist
+const refGroup = new THREE.Group(); scene.add(refGroup);
+let caseGroup = new THREE.Group(); scene.add(caseGroup);
+
+// XY reference + axes builders
+function buildRef(showXY, showAxes, showCage){
+  refGroup.clear();
+  if(showXY){
+    // XY plane at z=0 faint reference
+    const xyGeom = new THREE.PlaneGeometry(14,14);
+    const xyMat = new THREE.MeshBasicMaterial({color:0xF5EFE3, transparent:true, opacity:0.9, side:THREE.DoubleSide});
+    const xy = new THREE.Mesh(xyGeom, xyMat);
+    // grid
+    const grid = new THREE.GridHelper(14, 14, 0xB8AE9D, 0xD8CFC0);
+    grid.rotation.x = Math.PI/2; grid.position.z = 0.01;
+    refGroup.add(xy); refGroup.add(grid);
   }
-  arrow(new THREE.Vector3(1,0,0), COL.x, 'X');
-  arrow(new THREE.Vector3(0,1,0), COL.y, 'Y');
-  arrow(new THREE.Vector3(0,0,1), COL.z, 'Z');
-  // faint floor grid at z = -2.2 for orientation
-  const floor = new THREE.GridHelper(size*2.2, 12, 0xDDD6CD, 0xEAE3DA);
-  floor.rotation.x = Math.PI/2; floor.position.z = -2.6; floor.material.transparent=true; floor.material.opacity=0.6;
-  g.add(floor);
-  // origin marker - tiny
-  const origin = new THREE.Mesh(new THREE.SphereGeometry(0.04,10,10), new THREE.MeshBasicMaterial({color:0x111111}));
-  g.add(origin);
-  scene.add(g);
-  return g;
-}
-
-function makeBuilder(scene, width, height, renderer){
-  const group = new THREE.Group(); scene.add(group);
-  function plane(kind,val,color, diagKind){
-    let geom = new THREE.PlaneGeometry(7,7);
-    const mat = new THREE.MeshBasicMaterial({color, transparent:true, opacity:0.42, side:THREE.DoubleSide, depthWrite:false});
-    const mesh = new THREE.Mesh(geom, mat);
-    const wireMat = new THREE.LineBasicMaterial({color, transparent:true, opacity:0.55});
-    const wire = new THREE.LineSegments(new THREE.EdgesGeometry(geom), wireMat);
-    if(kind==='z'){ mesh.position.z = val; wire.position.z = val; }
-    if(kind==='y'){ mesh.rotation.x = Math.PI/2; mesh.position.y = val; wire.rotation.x = Math.PI/2; wire.position.y = val; }
-    if(kind==='x'){ mesh.rotation.y = Math.PI/2; mesh.position.x = val; wire.rotation.y = Math.PI/2; wire.position.x = val; }
-    if(kind==='diag'){
-      // vertical diagonal planes containing Z
-      if(diagKind==='x=y'){ mesh.rotation.y = Math.PI/4; wire.rotation.y = Math.PI/4; }
-      if(diagKind==='x+y'){ // x+y=val -> normal (1,1,0) at 45deg, shift by val / sqrt2
-        mesh.rotation.y = Math.PI/4; const s = val / Math.sqrt(2); mesh.position.x = s*Math.cos(Math.PI/4); mesh.position.y = s*Math.sin(Math.PI/4);
-        wire.rotation.y = Math.PI/4; wire.position.copy(mesh.position);
-      }
+  if(showAxes){
+    function axis(dir,color){
+      const len=6;
+      const pts=[new THREE.Vector3(0,0,0), dir.clone().multiplyScalar(len*0.92)];
+      refGroup.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({color})));
+      const cone=new THREE.Mesh(new THREE.ConeGeometry(0.14,0.42,12), new THREE.MeshBasicMaterial({color}));
+      cone.position.copy(dir.clone().multiplyScalar(len));
+      cone.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), dir.clone().normalize());
+      refGroup.add(cone);
     }
-    group.add(mesh); group.add(wire);
+    axis(new THREE.Vector3(1,0,0), COL.x);
+    axis(new THREE.Vector3(0,1,0), COL.y);
+    axis(new THREE.Vector3(0,0,1), COL.z);
+    refGroup.add(new THREE.Mesh(new THREE.SphereGeometry(0.08,10,10), new THREE.MeshBasicMaterial({color:0x111111})));
   }
-  function line(a,b,color, w=4, dashed=false){
-    const geom = new LineGeometry();
-    geom.setPositions([...a, ...b]);
-    const mat = new LineMaterial({color, linewidth: w, resolution: new THREE.Vector2(width, height), dashed: dashed, dashScale:1, dashSize:0.2, gapSize:0.15});
-    if(dashed){ mat.dashed = true; mat.defines = {USE_DASH:''}; }
-    const l = new Line2(geom, mat);
-    l.computeLineDistances();
-    group.add(l);
+  if(showCage){
+    const edges = new THREE.EdgesGeometry(new THREE.BoxGeometry(12,12,8));
+    refGroup.add(new THREE.LineSegments(edges, new THREE.LineBasicMaterial({color:0x999999, transparent:true, opacity:0.35})));
   }
-  function dashed(a,b,color){
-    const geom = new LineGeometry(); geom.setPositions([...a,...b]);
-    const mat = new LineMaterial({color, linewidth:2.5, resolution: new THREE.Vector2(width,height), dashed:true, dashSize:0.12, gapSize:0.12});
-    mat.defines={USE_DASH:''};
-    const l = new Line2(geom, mat); l.computeLineDistances(); group.add(l);
-  }
-  function dot(x,y,z,r=0.14){
-    const m = new THREE.Mesh(new THREE.SphereGeometry(r,18,18), new THREE.MeshBasicMaterial({color:COL.dot}));
-    m.position.set(x,y,z); group.add(m);
-    // halo
-    const halo = new THREE.Mesh(new THREE.SphereGeometry(r*1.8,12,12), new THREE.MeshBasicMaterial({color:COL.dot, transparent:true, opacity:0.18}));
-    halo.position.set(x,y,z); group.add(halo);
-  }
-  return {plane, line, dashed, dot, group};
 }
 
-function init(){
-  // build DOM
-  Object.entries(CASES).forEach(([gridId, list])=>{
-    const grid = document.getElementById(gridId);
-    list.forEach(it=>{
-      const cell = document.createElement('div'); cell.className='cell';
-      cell.innerHTML = `<div class="cell-head"><h3>${it.id} — ${it.name}</h3><span class="id">${it.note}</span></div>
-        <div class="viewport" id="vp-${it.id}"><div class="vp-label">drag · scroll · right-drag pan</div><div class="axis-legend"><span style="color:${'#'+COL.x.toString(16)}">— X</span> <span style="color:${'#'+COL.y.toString(16)}">— Y</span> <span style="color:${'#'+COL.z.toString(16)}">— Z</span></div></div>
-        <div class="cell-foot"><b>${it.id}</b><span>${it.note}</span></div>`;
-      grid.appendChild(cell);
-    });
-  });
-
-  Object.entries(CASES).forEach(([gridId, list])=>{
-    list.forEach(it=>{
-      const container = document.getElementById('vp-'+it.id);
-      const scene = new THREE.Scene(); scene.background = new THREE.Color(0xF2ECE2);
-      const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 100);
-      camera.position.set(4.2,-4.8,3.0);
-      const renderer = new THREE.WebGLRenderer({antialias:true, alpha:false});
-      renderer.setPixelRatio(Math.min(devicePixelRatio,2));
-      container.prepend(renderer.domElement);
-      function resize(){
-        const r = container.getBoundingClientRect(); const w = Math.max(1, r.width); const h = Math.max(1, r.height);
-        renderer.setSize(w,h,false);
-        camera.aspect = w/h; camera.updateProjectionMatrix();
-        // update LineMaterial resolutions
-        scene.traverse(o=>{ if(o.isLine2 && o.material && o.material.resolution){ o.material.resolution.set(w,h); } });
+// builder for case
+function makeCaseBuilder(group){
+  return {
+    plane(kind,val,color, diagKind){
+      const geom = new THREE.PlaneGeometry(10,10);
+      const mat = new THREE.MeshBasicMaterial({color, transparent:true, opacity:0.52, side:THREE.DoubleSide, depthWrite:false});
+      const mesh = new THREE.Mesh(geom, mat);
+      const wire = new THREE.LineSegments(new THREE.EdgesGeometry(geom), new THREE.LineBasicMaterial({color:0x222222, transparent:true, opacity:0.32}));
+      if(kind==='z'){ mesh.position.z=val; wire.position.z=val+0.001; }
+      if(kind==='y'){ mesh.rotation.x=Math.PI/2; mesh.position.y=val; wire.rotation.x=Math.PI/2; wire.position.y=val+0.001; }
+      if(kind==='x'){ mesh.rotation.y=Math.PI/2; mesh.position.x=val; wire.rotation.y=Math.PI/2; wire.position.x=val+0.001; }
+      if(kind==='diag'){
+        if(diagKind==='x=y'){ mesh.rotation.y=Math.PI/4; wire.rotation.y=Math.PI/4; }
+        if(diagKind==='x+y'){ mesh.rotation.y=Math.PI/4; const s=val/Math.sqrt(2); mesh.position.x=s*0.7071; mesh.position.y=s*0.7071; wire.rotation.y=Math.PI/4; wire.position.copy(mesh.position); wire.position.z+=0.001; }
       }
-      resize();
-      const controls = new OrbitControls(camera, renderer.domElement);
-      controls.enableDamping = true; controls.dampingFactor = 0.07; controls.minDistance=1.5; controls.maxDistance=14;
-      makeAxes(scene, 3.8);
-      const b = makeBuilder(scene, container.clientWidth, container.clientHeight, renderer);
-      try{ it.b(b); }catch(e){ console.warn(it.id,e); }
-      scene.add(new THREE.AmbientLight(0xffffff,1));
-      let raf;
-      const loop = ()=>{ raf=requestAnimationFrame(loop); controls.update(); renderer.render(scene,camera); };
-      loop();
-      const ro = new ResizeObserver(resize); ro.observe(container);
-      const io = new IntersectionObserver(entries=>{
-        entries.forEach(ent=>{ if(!ent.isIntersecting) cancelAnimationFrame(raf); else loop(); });
-      },{threshold:0}); io.observe(container);
-    });
+      group.add(mesh); group.add(wire);
+    },
+    line(a,b,color=COL.line){
+      const p0=new THREE.Vector3(...a), p1=new THREE.Vector3(...b);
+      const curve=new THREE.LineCurve3(p0,p1);
+      const geo=new THREE.TubeGeometry(curve, 6, 0.09, 12, false);
+      group.add(new THREE.Mesh(geo, new THREE.MeshBasicMaterial({color})));
+    },
+    dot(x,y,z,r=0.24){
+      const s=new THREE.Mesh(new THREE.SphereGeometry(r,20,20), new THREE.MeshBasicMaterial({color:COL.dot}));
+      s.position.set(x,y,z); group.add(s);
+      const halo=new THREE.Mesh(new THREE.SphereGeometry(r*2.4,14,14), new THREE.MeshBasicMaterial({color:COL.dot, transparent:true, opacity:0.20}));
+      halo.position.set(x,y,z); group.add(halo);
+    },
+    dashed(a,b){
+      const geo=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(...a), new THREE.Vector3(...b)]);
+      const mat=new THREE.LineDashedMaterial({color:0x8E8E8E, dashSize:0.24, gapSize:0.18, transparent:true, opacity:0.9});
+      const l=new THREE.Line(geo,mat); l.computeLineDistances(); group.add(l);
+    }
+  };
+}
+
+// UI wiring
+const tabs = document.getElementById('tabs');
+const listEl = document.getElementById('list');
+const jumpSel = document.getElementById('jump');
+let activeCat = 'two-lines';
+let activeId = '2L-1';
+
+function populateJump(){
+  jumpSel.innerHTML = CASES.map(c=>`<option value="${c.id}">${c.id} — ${c.name}</option>`).join('');
+}
+function renderList(){
+  const filtered = CASES.filter(c=>c.cat===activeCat);
+  listEl.innerHTML = filtered.map(c=>`
+    <div class="case-item ${c.id===activeId?'active':''}" data-id="${c.id}">
+      <div class="top-row"><span class="id">${c.id} — ${c.name}</span><span class="recon">${c.recon}</span></div>
+      <div class="mut">${c.note} · ${c.math}</div>
+    </div>`).join('');
+  listEl.querySelectorAll('.case-item').forEach(el=>{
+    el.addEventListener('click', ()=>{ setActive(el.dataset.id); });
   });
 }
-init();
+function setActive(id){
+  activeId = id;
+  const c = CASES.find(x=>x.id===id);
+  if(!c) return;
+  activeCat = c.cat;
+  tabs.querySelectorAll('button').forEach(b=>b.classList.toggle('active', b.dataset.cat===activeCat));
+  renderList();
+  jumpSel.value = id;
+  document.getElementById('cur-id').textContent = c.id;
+  document.getElementById('cur-name').textContent = c.name;
+  document.getElementById('cur-recon').textContent = c.recon;
+  document.getElementById('cur-note').textContent = c.note + ' · ' + c.why;
+  document.getElementById('cur-math').textContent = c.math;
+  document.getElementById('pill-math').innerHTML = `<b>${c.id} — ${c.math}</b>`;
+  document.getElementById('pill-why').innerHTML = `<b>Why:</b> ${c.why}`;
+  // rebuild case
+  scene.remove(caseGroup);
+  caseGroup = new THREE.Group(); scene.add(caseGroup);
+  const builder = makeCaseBuilder(caseGroup);
+  c.build(builder);
+}
+
+tabs.addEventListener('click', e=>{
+  if(e.target.tagName!=='BUTTON') return;
+  activeCat = e.target.dataset.cat;
+  tabs.querySelectorAll('button').forEach(b=>b.classList.toggle('active', b.dataset.cat===activeCat));
+  const first = CASES.find(c=>c.cat===activeCat);
+  if(first) activeId = first.id;
+  renderList();
+  setActive(activeId);
+});
+jumpSel.addEventListener('change', ()=> setActive(jumpSel.value));
+
+document.getElementById('toggle-xy').addEventListener('change', e=>{ buildRef(e.target.checked, document.getElementById('toggle-axes').checked, document.getElementById('toggle-cage').checked); });
+document.getElementById('toggle-axes').addEventListener('change', e=>{ buildRef(document.getElementById('toggle-xy').checked, e.target.checked, document.getElementById('toggle-cage').checked); });
+document.getElementById('toggle-cage').addEventListener('change', e=>{ buildRef(document.getElementById('toggle-xy').checked, document.getElementById('toggle-axes').checked, e.target.checked); });
+
+// orbit controls manual
+let isDragging=false, prevX=0, prevY=0, theta=-0.95, phi=1.0, radius=Math.hypot(7,8,5);
+function updateCam(){ const x=radius*Math.sin(phi)*Math.cos(theta); const y=radius*Math.sin(phi)*Math.sin(theta); const z=radius*Math.cos(phi); camera.position.set(x,y,z); camera.lookAt(0,0,0); }
+updateCam();
+viewer.addEventListener('pointerdown', e=>{ isDragging=true; prevX=e.clientX; prevY=e.clientY; viewer.setPointerCapture(e.pointerId); });
+viewer.addEventListener('pointerup', ()=> isDragging=false);
+viewer.addEventListener('pointermove', e=>{
+  if(!isDragging) return;
+  const dx=e.clientX-prevX, dy=e.clientY-prevY; prevX=e.clientX; prevY=e.clientY;
+  theta-=dx*0.007; phi=Math.max(0.12, Math.min(Math.PI-0.12, phi+dy*0.007)); updateCam();
+});
+viewer.addEventListener('wheel', e=>{ e.preventDefault(); radius=Math.max(1.4, Math.min(20, radius+e.deltaY*0.01)); updateCam(); }, {passive:false});
+
+function resize(){
+  const r=viewer.getBoundingClientRect(); renderer.setSize(r.width, r.height, false); camera.aspect=r.width/r.height; camera.updateProjectionMatrix();
+}
+resize(); window.addEventListener('resize', resize);
+
+function animate(){ requestAnimationFrame(animate); renderer.render(scene,camera); }
+animate();
+
+// init
+populateJump();
+buildRef(true,true,false);
+renderList();
+setActive('2L-1');
+
+// keyboard nav
+window.addEventListener('keydown', e=>{
+  if(e.key==='ArrowDown' || e.key==='ArrowUp'){
+    const idx=CASES.findIndex(c=>c.id===activeId);
+    const n = e.key==='ArrowDown' ? Math.min(CASES.length-1, idx+1) : Math.max(0, idx-1);
+    setActive(CASES[n].id);
+  }
+});
 </script>
 </body>
 </html>
